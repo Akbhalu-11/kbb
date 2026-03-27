@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login & Register - Kisan Bazaar</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-green: #2e7d32;
+            --accent-green: #4caf50;
+        }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #e8f5e9 0%, #ffffff 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .auth-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            overflow: hidden;
+            width: 100%;
+            max-width: 900px;
+            display: flex;
+        }
+        .auth-image {
+            background: url('https://images.unsplash.com/photo-1523348837708-15d4a09cfac2?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80');
+            background-size: cover;
+            background-position: center;
+            width: 45%;
+            display: none;
+        }
+        @media (min-width: 768px) {
+            .auth-image { display: block; }
+        }
+        .auth-form {
+            padding: 40px;
+            flex: 1;
+        }
+        .nav-pills .nav-link {
+            color: var(--primary-green);
+            font-weight: 600;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        .nav-pills .nav-link.active {
+            background-color: var(--primary-green);
+        }
+        .btn-green {
+            background-color: var(--primary-green);
+            color: white;
+            padding: 12px;
+            border-radius: 10px;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+        .btn-green:hover {
+            background-color: var(--accent-green);
+            color: white;
+        }
+        .form-control {
+            border-radius: 10px;
+            padding: 12px;
+            border: 1px solid #dee2e6;
+        }
+        .form-control:focus {
+            border-color: var(--primary-green);
+            box-shadow: 0 0 0 0.2rem rgba(46, 125, 50, 0.25);
+        }
+    </style>
+</head>
+<body>
+
+<div class="auth-card">
+    <div class="auth-image"></div>
+    <div class="auth-form">
+        <div class="text-center mb-4">
+            <h3 class="fw-bold text-success"><i class="fas fa-tractor me-2"></i>Kisan Bazaar</h3>
+            <p class="text-muted">Connecting Farmers to the Future</p>
+        </div>
+
+        <ul class="nav nav-pills nav-justified mb-4" id="pills-tab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="pills-login-tab" data-bs-toggle="pill" data-bs-target="#pills-login" type="button" role="tab">Login</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="pills-register-tab" data-bs-toggle="pill" data-bs-target="#pills-register" type="button" role="tab">Register</button>
+            </li>
+        </ul>
+
+        <div class="tab-content" id="pills-tabContent">
+            <!-- Login Form -->
+            <div class="tab-pane fade show active" id="pills-login" role="tabpanel">
+                <form>
+                    <div class="mb-3">
+                        <label class="form-label">Phone Number (मोबाइल नंबर)</label>
+                        <input type="tel" class="form-control" placeholder="Enter your registered number">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Password (पासवर्ड)</label>
+                        <input type="password" class="form-control" placeholder="••••••••">
+                    </div>
+                    <div class="d-flex justify-content-between mb-4">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="remember">
+                            <label class="form-check-label" for="remember">Remember me</label>
+                        </div>
+                        <a href="#" class="text-success text-decoration-none">Forgot Password?</a>
+                    </div>
+                    <button type="button" class="btn btn-green w-100" onclick="location.href='preview.html'">Login Now (लॉगिन करें)</button>
+                </form>
+            </div>
+
+            <!-- Register Form -->
+            <div class="tab-pane fade" id="pills-register" role="tabpanel">
+                <form>
+                    <div class="mb-3">
+                        <label class="form-label">Full Name (पूरा नाम)</label>
+                        <input type="text" class="form-control" placeholder="e.g. Ramesh Patel">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Phone Number (मोबाइल नंबर)</label>
+                        <input type="tel" class="form-control" placeholder="10-digit number">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Account Type (खाते का प्रकार)</label>
+                        <select class="form-select form-control">
+                            <option value="farmer">I am a Farmer (मैं किसान हूँ)</option>
+                            <option value="buyer">I am a Buyer/Trader (मैं खरीदार हूँ)</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Create Password (पासवर्ड बनाएं)</label>
+                        <input type="password" class="form-control" placeholder="••••••••">
+                    </div>
+                    <button type="button" class="btn btn-green w-100" onclick="location.href='preview.html'">Create Account (खाता बनाएं)</button>
+                </form>
+            </div>
+        </div>
+        
+        <div class="text-center mt-4">
+            <a href="preview.html" class="text-muted text-decoration-none"><i class="fas fa-arrow-left me-1"></i> Back to Home</a>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

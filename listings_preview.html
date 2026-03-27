@@ -1,0 +1,2225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Full Marketplace - Kisan Bazaar</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <!-- Razorpay Script -->
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+    <style>
+        :root {
+            --primary-green: #2e7d32;
+            --light-green: #e8f5e9;
+            --white: #ffffff;
+            --accent-green: #4caf50;
+        }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f8f9fa;
+        }
+        .navbar {
+            background-color: var(--primary-green) !important;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .navbar-brand, .nav-link {
+            color: var(--white) !important;
+        }
+        .section-title {
+            color: var(--primary-green);
+            font-weight: 600;
+            margin-bottom: 30px;
+            position: relative;
+            display: inline-block;
+        }
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 50%;
+            height: 3px;
+            background-color: var(--accent-green);
+        }
+        /* Google Translate Customization */
+        #google_translate_element {
+            margin-right: 15px;
+        }
+        .goog-te-gadget {
+            font-family: 'Poppins', sans-serif !important;
+            color: white !important;
+        }
+        .goog-te-gadget-simple {
+            background-color: rgba(255,255,255,0.1) !important;
+            border: 1px solid rgba(255,255,255,0.3) !important;
+            padding: 5px 10px !important;
+            border-radius: 20px !important;
+            cursor: pointer !important;
+        }
+        .goog-te-gadget-simple span {
+            color: white !important;
+        }
+        .goog-te-menu-value span {
+            color: white !important;
+        }
+        .goog-te-gadget-icon {
+            display: none !important;
+        }
+        iframe.goog-te-banner-frame {
+            display: none !important;
+        }
+        body {
+            top: 0 !important;
+        }
+        .card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            transition: 0.3s;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+        }
+        .category-header {
+            background-color: var(--light-green);
+            padding: 15px 25px;
+            border-radius: 12px;
+            margin-top: 40px;
+            margin-bottom: 25px;
+            border-left: 6px solid var(--primary-green);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        .sub-category-title {
+            color: #444;
+            font-weight: 600;
+            margin-top: 35px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .crop-img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            border-top-left-radius: 15px;
+            border-top-right-radius: 15px;
+            display: block;
+        }
+        .btn-call { background-color: #007bff; color: white; border: none; }
+        .btn-whatsapp { background-color: #25d366; color: white; border: none; }
+        .btn-rate-change { background-color: #ffc107; color: #333; font-weight: 600; border: none; }
+        .btn-call:hover, .btn-whatsapp:hover { opacity: 0.9; color: white; }
+        
+        .badge-location {
+            background-color: #e3f2fd;
+            color: #1976d2;
+            padding: 4px 8px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            display: inline-block;
+            margin-bottom: 8px;
+        }
+        .farmer-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid #eee;
+        }
+        .farmer-avatar {
+            width: 35px;
+            height: 35px;
+            background-color: var(--primary-green);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        .price-tag {
+            font-size: 1.1rem;
+            color: #d32f2f;
+            font-weight: 700;
+        }
+        /* Dashboard specific */
+        .dashboard-header {
+            background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 40px;
+        }
+        .out-of-stock {
+            filter: grayscale(1);
+            opacity: 0.6;
+            pointer-events: none;
+        }
+        .out-of-stock-label {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-15deg);
+            background-color: rgba(211, 47, 47, 0.9);
+            color: white;
+            padding: 5px 15px;
+            font-weight: bold;
+            border-radius: 5px;
+            z-index: 10;
+            border: 2px solid white;
+        }
+        .btn-buy { background-color: var(--primary-green); color: white; border: none; font-weight: 600; }
+        .btn-buy:hover { background-color: var(--accent-green); color: white; }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg sticky-top">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="preview.html">
+                <i class="fas fa-tractor me-2"></i>Kisan Bazaar
+            </a>
+            <div class="ms-auto d-flex align-items-center">
+                <div id="google_translate_element" class="me-2"></div>
+                <a href="preview.html" class="btn btn-light text-success fw-bold me-2">Home</a>
+                <a href="#pulses" class="btn btn-outline-light btn-sm me-1">Pulses</a>
+                <a href="#fruits" class="btn btn-outline-light btn-sm me-1">Fruits</a>
+                <a href="#dryfruits" class="btn btn-outline-light btn-sm">Dry Fruits</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Google Translate Script -->
+    <script type="text/javascript">
+        function googleTranslateElementInit() {
+            new google.translate.TranslateElement({
+                pageLanguage: 'en',
+                includedLanguages: 'hi,mr,pa,gu,ta,te,kn,ml,bn,en',
+                layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+                autoDisplay: false
+            }, 'google_translate_element');
+        }
+    </script>
+    <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
+<section class="py-5 bg-light">
+    <div class="container">
+        
+        <!-- DASHBOARD / RATE CHANGE SIMULATION -->
+        <div class="dashboard-header shadow">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h3 class="fw-bold mb-1">Farmer Dashboard (किसान डैशबोर्ड)</h3>
+                    <p class="mb-0 opacity-75">Welcome back, Ramesh Patel. You can update your crop rates and quantities here.</p>
+                </div>
+                <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                    <button class="btn btn-light text-success fw-bold rounded-pill" data-bs-toggle="modal" data-bs-target="#rateModal">
+                        <i class="fas fa-edit me-2"></i>Update My Listings
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <h2 class="section-title">Marketplace: All Crops & Fruits</h2>
+        
+        <!-- GRAINS SECTION -->
+        <div class="category-header" id="grains">
+            <h4 class="mb-0 text-success fw-bold"><i class="fas fa-wheat-awn me-2"></i>Grains (अनाज)</h4>
+        </div>
+
+        <h5 class="sub-category-title"><i class="fas fa-wheat-awn text-warning"></i>Common Grains</h5>
+        <div class="row g-4 mb-4">
+            <div class="col-lg-3 col-md-4 col-sm-6">
+                <div class="card h-100 shadow-sm product-card" id="crop-wheat-1" data-qty="100" data-price="2400">
+                    <div class="position-relative">
+                        <img crossorigin="anonymous" class="card-img-top crop-img" src="https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?auto=format&fit=crop&w=400&q=80" alt="Wheat">
+                    </div>
+                    <div class="card-body p-3">
+                        <span class="badge-location"><i class="fas fa-map-marker-alt me-1"></i>Ludhiana, Punjab</span>
+                        <h6 class="fw-bold mb-1">Sharbat Wheat (गेहूँ)</h6>
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <span class="small text-muted qty-display">100 Kg</span>
+                            <span class="price-tag">₹2400/Kg</span>
+                        </div>
+                        <div class="row g-2 mb-2">
+                            <div class="col-12">
+                                <button class="btn btn-buy btn-sm w-100 fw-bold" onclick="openBuyModal('Sharbat Wheat', 100, 'crop-wheat-1')">
+                                    <i class="fas fa-shopping-cart me-1"></i>Buy Now
+                                </button>
+                            </div>
+                        </div>
+                        <div class="row g-2">
+                            <div class="col-6"><a href="tel:9872233445" class="btn btn-call btn-sm w-100"><i class="fas fa-phone-alt me-1"></i>Call</a></div>
+                            <div class="col-6"><a href="https://wa.me/919872233445?text=Interested%20in%20Wheat" target="_blank" class="btn btn-whatsapp btn-sm w-100"><i class="fab fa-whatsapp me-1"></i>Chat</a></div>
+                        </div>
+                        <div class="farmer-info">
+                            <div class="farmer-avatar">HS</div>
+                            <span class="small fw-bold">Harpreet Singh</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-4 col-sm-6">
+                <div class="card h-100 shadow-sm product-card" id="crop-rice-1" data-qty="50" data-price="4500">
+                    <div class="position-relative">
+                        <img crossorigin="anonymous" class="card-img-top crop-img" src="https://up.yimg.com/ib/th/id/OIP.FiQOS4UXN4i16I_8Ix1bjAHaEK?pid=Api&rs=1&c=1&qlt=95&w=211&h=118" alt="Rice">
+                    </div>
+                    <div class="card-body p-3">
+                        <span class="badge-location"><i class="fas fa-map-marker-alt me-1"></i>Karnal, Haryana</span>
+                        <h6 class="fw-bold mb-1">Basmati Rice (चावल)</h6>
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <span class="small text-muted qty-display">50 Kg</span>
+                            <span class="price-tag">₹4500/Kg</span>
+                        </div>
+                        <div class="row g-2 mb-2">
+                            <div class="col-12">
+                                <button class="btn btn-buy btn-sm w-100 fw-bold" onclick="openBuyModal('Basmati Rice', 50, 'crop-rice-1')">
+                                    <i class="fas fa-shopping-cart me-1"></i>Buy Now
+                                </button>
+                            </div>
+                        </div>
+                        <div class="row g-2">
+                            <div class="col-6"><a href="tel:9812345678" class="btn btn-call btn-sm w-100"><i class="fas fa-phone-alt me-1"></i>Call</a></div>
+                            <div class="col-6"><a href="https://wa.me/919812345678?text=Interested%20in%20Basmati%20Rice" target="_blank" class="btn btn-whatsapp btn-sm w-100"><i class="fab fa-whatsapp me-1"></i>Chat</a></div>
+                        </div>
+                        <div class="farmer-info">
+                            <div class="farmer-avatar">RS</div>
+                            <span class="small fw-bold">Rajinder Singh</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-4 col-sm-6">
+                <div class="card h-100 shadow-sm product-card" id="crop-mustard-1" data-qty="30" data-price="5200">
+                    <div class="position-relative">
+                        <img crossorigin="anonymous" class="card-img-top crop-img" src="https://up.yimg.com/ib/th/id/OIP.75kPmo9fUT3XeJ0L3fPAFgHaEo?pid=Api&rs=1&c=1&qlt=95&w=179&h=112" alt="Mustard">
+                    </div>
+                    <div class="card-body p-3">
+                        <span class="badge-location"><i class="fas fa-map-marker-alt me-1"></i>Karnal, Haryana</span>
+                        <h6 class="fw-bold mb-1">Mustard Seeds (सरसों)</h6>
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <span class="small text-muted qty-display">30 Kg</span>
+                            <span class="price-tag">₹5200/Kg</span>
+                        </div>
+                        <div class="row g-2 mb-2">
+                            <div class="col-12">
+                                <button class="btn btn-buy btn-sm w-100 fw-bold" onclick="openBuyModal('Mustard Seeds', 30, 'crop-mustard-1')">
+                                    <i class="fas fa-shopping-cart me-1"></i>Buy Now
+                                </button>
+                            </div>
+                        </div>
+                        <div class="row g-2">
+                            <div class="col-6"><a href="tel:9812345678" class="btn btn-call btn-sm w-100"><i class="fas fa-phone-alt me-1"></i>Call</a></div>
+                            <div class="col-6"><a href="https://wa.me/919812345678?text=Interested%20in%20Mustard%20Seeds" target="_blank" class="btn btn-whatsapp btn-sm w-100"><i class="fab fa-whatsapp me-1"></i>Chat</a></div>
+                        </div>
+                        <div class="farmer-info">
+                            <div class="farmer-avatar">RS</div>
+                            <span class="small fw-bold">Rajinder Singh</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-4 col-sm-6">
+                <div class="card h-100 shadow-sm product-card" id="crop-mustard-2" data-qty="30" data-price="5200">
+                    <div class="position-relative">
+                        <img crossorigin="anonymous" class="card-img-top crop-img" src="https://up.yimg.com/ib/th/id/OIP.75kPmo9fUT3XeJ0L3fPAFgHaEo?pid=Api&rs=1&c=1&qlt=95&w=179&h=112" alt="Mustard">
+                    </div>
+                    <div class="card-body p-3">
+                        <span class="badge-location"><i class="fas fa-map-marker-alt me-1"></i>Amritsar, Punjab</span>
+                        <h6 class="fw-bold mb-1">Mustard Seeds (सरसों)</h6>
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <span class="small text-muted qty-display">30 Kg</span>
+                            <span class="price-tag">₹5200/Kg</span>
+                        </div>
+                        <div class="row g-2 mb-2">
+                            <div class="col-12">
+                                <button class="btn btn-buy btn-sm w-100 fw-bold" onclick="openBuyModal('Mustard Seeds', 30, 'crop-mustard-1')">
+                                    <i class="fas fa-shopping-cart me-1"></i>Buy Now
+                                </button>
+                            </div>
+                        </div>
+                        <div class="row g-2">
+                            <div class="col-6"><a href="tel:9123456789" class="btn btn-call btn-sm w-100"><i class="fas fa-phone-alt me-1"></i>Call</a></div>
+                            <div class="col-6"><a href="https://wa.me/919123456789?text=Interested%20in%20Mustard" target="_blank" class="btn btn-whatsapp btn-sm w-100"><i class="fab fa-whatsapp me-1"></i>Chat</a></div>
+                        </div>
+                        <div class="farmer-info">
+                            <div class="farmer-avatar">SK</div>
+                            <span class="small fw-bold">Suresh Kumar</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-4 col-sm-6">
+                <div class="card h-100 shadow-sm product-card" id="crop-bajra-1" data-qty="40" data-price="1800">
+                    <div class="position-relative">
+                        <img crossorigin="anonymous" class="card-img-top crop-img" src="https://up.yimg.com/ib/th/id/OIP.NTTL0Re8DcCEFgMsKCKjIQHaEJ?pid=Api&rs=1&c=1&qlt=95&w=222&h=124" alt="Bajra">
+                    </div>
+                    <div class="card-body p-3">
+                        <span class="badge-location"><i class="fas fa-map-marker-alt me-1"></i>Nagaur, Rajasthan</span>
+                        <h6 class="fw-bold mb-1">Bajra (Pearl Millet)</h6>
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <span class="small text-muted qty-display">40 Kg</span>
+                            <span class="price-tag">₹1800/Kg</span>
+                        </div>
+                        <div class="row g-2 mb-2">
+                            <div class="col-12">
+                                <button class="btn btn-buy btn-sm w-100 fw-bold" onclick="openBuyModal('Bajra (Pearl Millet)', 40, 'crop-bajra-1')">
+                                    <i class="fas fa-shopping-cart me-1"></i>Buy Now
+                                </button>
+                            </div>
+                        </div>
+                        <div class="row g-2">
+                            <div class="col-6"><a href="tel:9414455667" class="btn btn-call btn-sm w-100"><i class="fas fa-phone-alt me-1"></i>Call</a></div>
+                            <div class="col-6"><a href="https://wa.me/919414455667?text=Interested%20in%20Bajra" target="_blank" class="btn btn-whatsapp btn-sm w-100"><i class="fab fa-whatsapp me-1"></i>Chat</a></div>
+                        </div>
+                        <div class="farmer-info">
+                            <div class="farmer-avatar">ML</div>
+                            <span class="small fw-bold">Mohan Lal</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PULSES SECTION -->
+        <div class="category-header" id="pulses">
+            <h4 class="mb-0 text-success fw-bold"><i class="fas fa-seedling me-2"></i>Pulses (दालें)</h4>
+        </div>
+
+        <h5 class="sub-category-title"><i class="fas fa-leaf text-success"></i>Common Pulses (Dals)</h5>
+        <div class="row g-4">
+            <div class="col-lg-3 col-md-4 col-sm-6">
+                <div class="card h-100 shadow-sm product-card" id="crop-toor-1" data-qty="25" data-price="5500">
+                    <div class="position-relative">
+                        <img crossorigin="anonymous" class="card-img-top crop-img" src="https://up.yimg.com/ib/th/id/OIP.LqHH7vhtJBtEfrzRhe0E_AHaE8?pid=Api&rs=1&c=1&qlt=95&w=172&h=114" alt="Toor Dal">
+                    </div>
+                    <div class="card-body p-3">
+                        <span class="badge-location"><i class="fas fa-map-marker-alt me-1"></i>Nagaur, Rajasthan</span>
+                        <h6 class="fw-bold mb-1">Toor Dal (Arhar Dal)</h6>
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <span class="small text-muted qty-display">25 Kg</span>
+                            <span class="price-tag">₹5500/Kg</span>
+                        </div>
+                        <div class="row g-2 mb-2">
+                            <div class="col-12">
+                                <button class="btn btn-buy btn-sm w-100 fw-bold" onclick="openBuyModal('Toor Dal', 25, 'crop-toor-1')">
+                                    <i class="fas fa-shopping-cart me-1"></i>Buy Now
+                                </button>
+                            </div>
+                        </div>
+                        <div class="row g-2">
+                            <div class="col-6"><a href="tel:9414455667" class="btn btn-call btn-sm w-100"><i class="fas fa-phone-alt me-1"></i>Call</a></div>
+                            <div class="col-6"><a href="https://wa.me/919414455667?text=Interested%20in%20Toor%20Dal" target="_blank" class="btn btn-whatsapp btn-sm w-100"><i class="fab fa-whatsapp me-1"></i>Chat</a></div>
+                        </div>
+                        <div class="farmer-info">
+                            <div class="farmer-avatar">ML</div>
+                            <span class="small fw-bold">Mohan Lal</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-4 col-sm-6">
+                <div class="card h-100 shadow-sm product-card" id="crop-moong-1" data-qty="20" data-price="4500">
+                    <div class="position-relative">
+                        <img crossorigin="anonymous" class="card-img-top crop-img" src="https://up.yimg.com/ib/th/id/OIP.MO-vrw1qzQ0g7ks0h1BdGAHaEj?pid=Api&rs=1&c=1&qlt=95&w=165&h=101" alt="Moong Dal">
+                    </div>
+                    <div class="card-body p-3">
+                        <span class="badge-location"><i class="fas fa-map-marker-alt me-1"></i>Merta, Rajasthan</span>
+                        <h6 class="fw-bold mb-1">Moong Dal (Green Gram)</h6>
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <span class="small text-muted qty-display">20 Kg</span>
+                            <span class="price-tag">₹4500/Kg</span>
+                        </div>
+                        <div class="row g-2 mb-2">
+                            <div class="col-12">
+                                <button class="btn btn-buy btn-sm w-100 fw-bold" onclick="openBuyModal('Moong Dal', 20, 'crop-moong-1')">
+                                    <i class="fas fa-shopping-cart me-1"></i>Buy Now
+                                </button>
+                            </div>
+                        </div>
+                        <div class="row g-2">
+                            <div class="col-6"><a href="tel:9414455667" class="btn btn-call btn-sm w-100"><i class="fas fa-phone-alt me-1"></i>Call</a></div>
+                            <div class="col-6"><a href="https://wa.me/919414455667?text=Interested%20in%20Moong%20Dal" target="_blank" class="btn btn-whatsapp btn-sm w-100"><i class="fab fa-whatsapp me-1"></i>Chat</a></div>
+                        </div>
+                        <div class="farmer-info">
+                            <div class="farmer-avatar">ML</div>
+                            <span class="small fw-bold">Mohan Lal</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-4 col-sm-6">
+                <div class="card h-100 shadow-sm product-card" id="crop-urad-1" data-qty="20" data-price="5000">
+                    <div class="position-relative">
+                        <img crossorigin="anonymous" class="card-img-top crop-img" src="https://up.yimg.com/ib/th/id/OIP.j5ovHWqKYkGwBHsusIVJrAHaHa?pid=Api&rs=1&c=1&qlt=95&w=124&h=124" alt="Urad Dal">
+                    </div>
+                    <div class="card-body p-3">
+                        <span class="badge-location"><i class="fas fa-map-marker-alt me-1"></i>Karnal, Haryana</span>
+                        <h6 class="fw-bold mb-1">Urad Dal (Black Gram)</h6>
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <span class="small text-muted qty-display">20 Kg</span>
+                            <span class="price-tag">₹5000/Kg</span>
+                        </div>
+                        <div class="row g-2 mb-2">
+                            <div class="col-12">
+                                <button class="btn btn-buy btn-sm w-100 fw-bold" onclick="openBuyModal('Urad Dal', 20, 'crop-urad-1')">
+                                    <i class="fas fa-shopping-cart me-1"></i>Buy Now
+                                </button>
+                            </div>
+                        </div>
+                        <div class="row g-2">
+                            <div class="col-6"><a href="tel:9812345678" class="btn btn-call btn-sm w-100"><i class="fas fa-phone-alt me-1"></i>Call</a></div>
+                            <div class="col-6"><a href="https://wa.me/919812345678?text=Interested%20in%20Urad%20Dal" target="_blank" class="btn btn-whatsapp btn-sm w-100"><i class="fab fa-whatsapp me-1"></i>Chat</a></div>
+                        </div>
+                        <div class="farmer-info">
+                            <div class="farmer-avatar">RS</div>
+                            <span class="small fw-bold">Rajinder Singh</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-4 col-sm-6">
+                <div class="card h-100 shadow-sm product-card" id="crop-masoor-1" data-qty="30" data-price="4200">
+                    <div class="position-relative">
+                        <img crossorigin="anonymous" class="card-img-top crop-img" src="https://sp.yimg.com/ib/th/id/OIP.iHOKoHWhBYVfMXWoetINgQAAAA?pid=Api&w=148&h=148&c=7&dpr=2&rs=1" alt="Masoor Dal">
+                    </div>
+                    <div class="card-body p-3">
+                        <span class="badge-location"><i class="fas fa-map-marker-alt me-1"></i>Jabalpur, MP</span>
+                        <h6 class="fw-bold mb-1">Masoor Dal (Red Lentil)</h6>
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <span class="small text-muted qty-display">30 Kg</span>
+                            <span class="price-tag">₹4200/Kg</span>
+                        </div>
+                        <div class="row g-2 mb-2">
+                            <div class="col-12">
+                                <button class="btn btn-buy btn-sm w-100 fw-bold" onclick="openBuyModal('Masoor Dal', 30, 'crop-masoor-1')">
+                                    <i class="fas fa-shopping-cart me-1"></i>Buy Now
+                                </button>
+                            </div>
+                        </div>
+                        <div class="row g-2">
+                            <div class="col-6"><a href="tel:9876541234" class="btn btn-call btn-sm w-100"><i class="fas fa-phone-alt me-1"></i>Call</a></div>
+                            <div class="col-6"><a href="https://wa.me/919876541234?text=Interested%20in%20Masoor%20Dal" target="_blank" class="btn btn-whatsapp btn-sm w-100"><i class="fab fa-whatsapp me-1"></i>Chat</a></div>
+                        </div>
+                        <div class="farmer-info">
+                            <div class="farmer-avatar">MK</div>
+                            <span class="small fw-bold">Meena Kumari</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <h5 class="sub-category-title"><i class="fas fa-seedling text-success"></i>Beans, Chickpeas & More</h5>
+        <div class="row g-4">
+            <div class="col-lg-3 col-md-4 col-sm-6">
+                <div class="card h-100 shadow-sm product-card" id="crop-chana-1" data-qty="20" data-price="3800">
+                    <div class="position-relative">
+                        <img crossorigin="anonymous" class="card-img-top crop-img" src="https://up.yimg.com/ib/th/id/OIP.d7y30IeFU52Y2Ji8URKJrgHaFe?pid=Api&rs=1&c=1&qlt=95&w=144&h=106" alt="Chana Dal">
+                    </div>
+                    <div class="card-body p-3">
+                        <span class="badge-location"><i class="fas fa-map-marker-alt me-1"></i>Ludhiana, Punjab</span>
+                        <h6 class="fw-bold mb-1">Chana Dal (Split)</h6>
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <span class="small text-muted qty-display">20 Kg</span>
+                            <span class="price-tag">₹3800/Kg</span>
+                        </div>
+                        <div class="row g-2 mb-2">
+                            <div class="col-12">
+                                <button class="btn btn-buy btn-sm w-100 fw-bold" onclick="openBuyModal('Chana Dal', 20, 'crop-chana-1')">
+                                    <i class="fas fa-shopping-cart me-1"></i>Buy Now
+                                </button>
+                            </div>
+                        </div>
+                        <div class="row g-2">
+                            <div class="col-6"><a href="tel:9872233445" class="btn btn-call btn-sm w-100"><i class="fas fa-phone-alt me-1"></i>Call</a></div>
+                            <div class="col-6"><a href="https://wa.me/919872233445?text=Interested%20in%20Chana%20Dal" target="_blank" class="btn btn-whatsapp btn-sm w-100"><i class="fab fa-whatsapp me-1"></i>Chat</a></div>
+                        </div>
+                        <div class="farmer-info">
+                            <div class="farmer-avatar">HS</div>
+                            <span class="small fw-bold">Harpreet Singh</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-4 col-sm-6">
+                <div class="card h-100 shadow-sm product-card" id="crop-chana-whole-1" data-qty="40" data-price="3500">
+                    <div class="position-relative">
+                        <img crossorigin="anonymous" class="card-img-top crop-img" src="https://up.yimg.com/ib/th/id/OIP.E5NvYLLDCk20chNfHX1HewHaE7?pid=Api&rs=1&c=1&qlt=95&w=175&h=116" alt="Whole">
+                    </div>
+                    <div class="card-body p-3">
+                        <span class="badge-location"><i class="fas fa-map-marker-alt me-1"></i>Ludhiana, Punjab</span>
+                        <h6 class="fw-bold mb-1">Whole Chana (Kala Chana)</h6>
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <span class="small text-muted qty-display">40 Kg</span>
+                            <span class="price-tag">₹3500/Kg</span>
+                        </div>
+                        <div class="row g-2 mb-2">
+                            <div class="col-12">
+                                <button class="btn btn-buy btn-sm w-100 fw-bold" onclick="openBuyModal('Whole Chana', 40, 'crop-chana-whole-1')">
+                                    <i class="fas fa-shopping-cart me-1"></i>Buy Now
+                                </button>
+                            </div>
+                        </div>
+                        <div class="row g-2">
+                            <div class="col-6"><a href="tel:9872233445" class="btn btn-call btn-sm w-100"><i class="fas fa-phone-alt me-1"></i>Call</a></div>
+                            <div class="col-6"><a href="https://wa.me/919872233445?text=Interested%20in%20Whole%20Chana" target="_blank" class="btn btn-whatsapp btn-sm w-100"><i class="fab fa-whatsapp me-1"></i>Chat</a></div>
+                        </div>
+                        <div class="farmer-info">
+                            <div class="farmer-avatar">HS</div>
+                            <span class="small fw-bold">Harpreet Singh</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-4 col-sm-6">
+                <div class="card h-100 shadow-sm product-card" id="crop-kabuli-1" data-qty="20" data-price="6000">
+                    <div class="position-relative">
+                        <img crossorigin="anonymous" class="card-img-top crop-img" src="https://up.yimg.com/ib/th/id/OIP.b-awC21N9iy_gkSkfhIv1gHaHa?pid=Api&rs=1&c=1&qlt=95&w=117&h=117" alt="Kabuli Chana">
+                    </div>
+                    <div class="card-body p-3">
+                        <span class="badge-location"><i class="fas fa-map-marker-alt me-1"></i>Karnal, Haryana</span>
+                        <h6 class="fw-bold mb-1">Kabuli Chana (Chickpeas)</h6>
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <span class="small text-muted qty-display">20 Kg</span>
+                            <span class="price-tag">₹6000/Kg</span>
+                        </div>
+                        <div class="row g-2 mb-2">
+                            <div class="col-12">
+                                <button class="btn btn-buy btn-sm w-100 fw-bold" onclick="openBuyModal('Kabuli Chana', 20, 'crop-kabuli-1')">
+                                    <i class="fas fa-shopping-cart me-1"></i>Buy Now
+                                </button>
+                            </div>
+                        </div>
+                        <div class="row g-2">
+                            <div class="col-6"><a href="tel:9812345678" class="btn btn-call btn-sm w-100"><i class="fas fa-phone-alt me-1"></i>Call</a></div>
+                            <div class="col-6"><a href="https://wa.me/919812345678?text=Interested%20in%20Kabuli%20Chana" target="_blank" class="btn btn-whatsapp btn-sm w-100"><i class="fab fa-whatsapp me-1"></i>Chat</a></div>
+                        </div>
+                        <div class="farmer-info">
+                            <div class="farmer-avatar">RS</div>
+                            <span class="small fw-bold">Rajinder Singh</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-4 col-sm-6">
+                <div class="card h-100 shadow-sm product-card" id="crop-rajma-1" data-qty="20" data-price="7500">
+                    <div class="position-relative">
+                        <img crossorigin="anonymous" class="card-img-top crop-img" src="https://up.yimg.com/ib/th/id/OIP.vNSQmIT6fZGAfocVNbUzKAHaHa?pid=Api&rs=1&c=1&qlt=95&w=114&h=114" alt="Rajma">
+                    </div>
+                    <div class="card-body p-3">
+                        <span class="badge-location"><i class="fas fa-map-marker-alt me-1"></i>Shimla, HP</span>
+                        <h6 class="fw-bold mb-1">Rajma (Kidney Beans)</h6>
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <span class="small text-muted qty-display">20 Kg</span>
+                            <span class="price-tag">₹7500/Kg</span>
+                        </div>
+                        <div class="row g-2 mb-2">
+                            <div class="col-12">
+                                <button class="btn btn-buy btn-sm w-100 fw-bold" onclick="openBuyModal('Rajma', 20, 'crop-rajma-1')">
+                                    <i class="fas fa-shopping-cart me-1"></i>Buy Now
+                                </button>
+                            </div>
+                        </div>
+                        <div class="row g-2">
+                            <div class="col-6"><a href="tel:9822113344" class="btn btn-call btn-sm w-100"><i class="fas fa-phone-alt me-1"></i>Call</a></div>
+                            <div class="col-6"><a href="https://wa.me/919822113344?text=Interested%20in%20Rajma" target="_blank" class="btn btn-whatsapp btn-sm w-100"><i class="fab fa-whatsapp me-1"></i>Chat</a></div>
+                        </div>
+                        <div class="farmer-info">
+                            <div class="farmer-avatar">VK</div>
+                            <span class="small fw-bold">Vijay Kumar</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-4 col-sm-6">
+                <div class="card h-100 shadow-sm product-card" id="crop-lobia-1" data-qty="20" data-price="4800">
+                    <div class="position-relative">
+                        <img crossorigin="anonymous" class="card-img-top crop-img" src="https://up.yimg.com/ib/th/id/OIP.EH9x1Ri9FQ3ar3RC4zHvpwHaEH?pid=Api&rs=1&c=1&qlt=95&w=209&h=116" alt="Lobia">
+                    </div>
+                    <div class="card-body p-3">
+                        <span class="badge-location"><i class="fas fa-map-marker-alt me-1"></i>Mandya, Karnataka</span>
+                        <h6 class="fw-bold mb-1">Lobia (Black-eyed Peas)</h6>
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <span class="small text-muted qty-display">20 Kg</span>
+                            <span class="price-tag">₹4800/Kg</span>
+                        </div>
+                        <div class="row g-2 mb-2">
+                            <div class="col-12">
+                                <button class="btn btn-buy btn-sm w-100 fw-bold" onclick="openBuyModal('Lobia', 20, 'crop-lobia-1')">
+                                    <i class="fas fa-shopping-cart me-1"></i>Buy Now
+                                </button>
+                            </div>
+                        </div>
+                        <div class="row g-2">
+                            <div class="col-6"><a href="tel:9845612345" class="btn btn-call btn-sm w-100"><i class="fas fa-phone-alt me-1"></i>Call</a></div>
+                            <div class="col-6"><a href="https://wa.me/919845612345?text=Interested%20in%20Lobia" target="_blank" class="btn btn-whatsapp btn-sm w-100"><i class="fab fa-whatsapp me-1"></i>Chat</a></div>
+                        </div>
+                        <div class="farmer-info">
+                            <div class="farmer-avatar">BR</div>
+                            <span class="small fw-bold">Babu Rao</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-4 col-sm-6">
+                <div class="card h-100 shadow-sm product-card" id="crop-soybean-1" data-qty="100" data-price="4000">
+                    <div class="position-relative">
+                        <img crossorigin="anonymous" class="card-img-top crop-img" src="https://tse4.mm.bing.net/th/id/OIP._bLObKuJsoMYmVrf3N7RyQHaE8?pid=Api&P=0&h=180" alt="Soybean">
+                    </div>
+                    <div class="card-body p-3">
+                        <span class="badge-location"><i class="fas fa-map-marker-alt me-1"></i>Indore, MP</span>
+                        <h6 class="fw-bold mb-1">Soybean</h6>
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <span class="small text-muted qty-display">100 Kg</span>
+                            <span class="price-tag">₹4000/Kg</span>
+                        </div>
+                        <div class="row g-2 mb-2">
+                            <div class="col-12">
+                                <button class="btn btn-buy btn-sm w-100 fw-bold" onclick="openBuyModal('Soybean', 100, 'crop-soybean-1')">
+                                    <i class="fas fa-shopping-cart me-1"></i>Buy Now
+                                </button>
+                            </div>
+                        </div>
+                        <div class="row g-2">
+                            <div class="col-6"><a href="tel:9833001122" class="btn btn-call btn-sm w-100"><i class="fas fa-phone-alt me-1"></i>Call</a></div>
+                            <div class="col-6"><a href="https://wa.me/919833001122?text=Interested%20in%20Soybean" target="_blank" class="btn btn-whatsapp btn-sm w-100"><i class="fab fa-whatsapp me-1"></i>Chat</a></div>
+                        </div>
+                        <div class="farmer-info">
+                            <div class="farmer-avatar">GD</div>
+                            <span class="small fw-bold">Gopal Das</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-4 col-sm-6">
+                <div class="card h-100 shadow-sm product-card" id="crop-moth-1" data-qty="20" data-price="5200">
+                    <div class="position-relative">
+                        <img crossorigin="anonymous" class="card-img-top crop-img" src="https://tse1.mm.bing.net/th/id/OIP._EBmuM5Qiu1YkSEFw98vAwHaF-?pid=Api&P=0&h=180" alt="Moth Beans">
+                    </div>
+                    <div class="card-body p-3">
+                        <span class="badge-location"><i class="fas fa-map-marker-alt me-1"></i>Nagaur, Rajasthan</span>
+                        <h6 class="fw-bold mb-1">Moth Beans (Matki)</h6>
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <span class="small text-muted qty-display">20 Kg</span>
+                            <span class="price-tag">₹5200/Kg</span>
+                        </div>
+                        <div class="row g-2 mb-2">
+                            <div class="col-12">
+                                <button class="btn btn-buy btn-sm w-100 fw-bold" onclick="openBuyModal('Moth Beans', 20, 'crop-moth-1')">
+                                    <i class="fas fa-shopping-cart me-1"></i>Buy Now
+                                </button>
+                            </div>
+                        </div>
+                        <div class="row g-2">
+                            <div class="col-6"><a href="tel:9414455667" class="btn btn-call btn-sm w-100"><i class="fas fa-phone-alt me-1"></i>Call</a></div>
+                            <div class="col-6"><a href="https://wa.me/919414455667?text=Interested%20in%20Moth%20Beans" target="_blank" class="btn btn-whatsapp btn-sm w-100"><i class="fab fa-whatsapp me-1"></i>Chat</a></div>
+                        </div>
+                        <div class="farmer-info">
+                            <div class="farmer-avatar">ML</div>
+                            <span class="small fw-bold">Mohan Lal</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-4 col-sm-6">
+                <div class="card h-100 shadow-sm product-card" id="crop-peas-1" data-qty="25" data-price="2800">
+                    <div class="position-relative">
+                        <img crossorigin="anonymous" class="card-img-top crop-img" src="https://tse1.mm.bing.net/th/id/OIP.8L6xtp4pidOsz0Hggz_f0QHaGC?pid=Api&P=0&h=180" alt="Dry Peas">
+                    </div>
+                    <div class="card-body p-3">
+                        <span class="badge-location"><i class="fas fa-map-marker-alt me-1"></i>Karnal, Haryana</span>
+                        <h6 class="fw-bold mb-1">Dry Green Peas</h6>
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <span class="small text-muted qty-display">25 Kg</span>
+                            <span class="price-tag">₹2800/Kg</span>
+                        </div>
+                        <div class="row g-2 mb-2">
+                            <div class="col-12">
+                                <button class="btn btn-buy btn-sm w-100 fw-bold" onclick="openBuyModal('Dry Green Peas', 25, 'crop-peas-1')">
+                                    <i class="fas fa-shopping-cart me-1"></i>Buy Now
+                                </button>
+                            </div>
+                        </div>
+                        <div class="row g-2">
+                            <div class="col-6"><a href="tel:9812345678" class="btn btn-call btn-sm w-100"><i class="fas fa-phone-alt me-1"></i>Call</a></div>
+                            <div class="col-6"><a href="https://wa.me/919812345678?text=Interested%20in%20Dry%20Peas" target="_blank" class="btn btn-whatsapp btn-sm w-100"><i class="fab fa-whatsapp me-1"></i>Chat</a></div>
+                        </div>
+                        <div class="farmer-info">
+                            <div class="farmer-avatar">RS</div>
+                            <span class="small fw-bold">Rajinder Singh</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- FRUITS SECTION -->
+        <div class="category-header" id="fruits">
+            <h4 class="mb-0 text-success fw-bold"><i class="fas fa-apple-whole me-2"></i>Fruits (फल)</h4>
+        </div>
+
+        <h5 class="sub-category-title"><i class="fas fa-apple-whole text-danger"></i>Common Fruits</h5>
+        <div class="row g-4">
+            <div class="col-lg-3 col-md-4 col-sm-6">
+                <div class="card h-100 shadow-sm product-card" id="crop-apple-1" data-qty="500" data-price="120">
+                    <div class="position-relative">
+                        <img crossorigin="anonymous" class="card-img-top crop-img" src="https://sp.yimg.com/ib/th/id/OIP.AnqqcDvVmBG08_JQVD46JwHaE7?pid=Api&w=148&h=148&c=7&dpr=2&rs=1" alt="Apple">
+                    </div>
+                    <div class="card-body p-3">
+                        <span class="badge-location"><i class="fas fa-map-marker-alt me-1"></i>Shimla, HP</span>
+                        <h6 class="fw-bold mb-1">Apple (सेब)</h6>
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <span class="small text-muted qty-display">500 Kg</span>
+                            <span class="price-tag">₹120/Kg</span>
+                        </div>
+                        <div class="row g-2 mb-2">
+                            <div class="col-12">
+                                <button class="btn btn-buy btn-sm w-100 fw-bold" onclick="openBuyModal('Apple', 500, 'crop-apple-1')">
+                                    <i class="fas fa-shopping-cart me-1"></i>Buy Now
+                                </button>
+                            </div>
+                        </div>
+                        <div class="row g-2">
+                            <div class="col-6"><a href="tel:9822113344" class="btn btn-call btn-sm w-100"><i class="fas fa-phone-alt me-1"></i>Call</a></div>
+                            <div class="col-6"><a href="https://wa.me/919822113344?text=Interested%20in%20Apple" target="_blank" class="btn btn-whatsapp btn-sm w-100"><i class="fab fa-whatsapp me-1"></i>Chat</a></div>
+                        </div>
+                        <div class="farmer-info">
+                            <div class="farmer-avatar">VK</div>
+                            <span class="small fw-bold">Vijay Kumar</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-4 col-sm-6">
+                <div class="card h-100 shadow-sm product-card" id="crop-banana-1" data-qty="100" data-price="40">
+                    <div class="position-relative">
+                        <img crossorigin="anonymous" class="card-img-top crop-img" src="https://tse3.mm.bing.net/th/id/OIP.Af01_8nBucoehgQ7QpoyhwHaEJ?pid=Api&P=0&h=180" alt="Banana">
+                    </div>
+                    <div class="card-body p-3">
+                        <span class="badge-location"><i class="fas fa-map-marker-alt me-1"></i>Muzzafarpur, Bihar</span>
+                        <h6 class="fw-bold mb-1">Banana (केला)</h6>
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <span class="small text-muted qty-display">100 Kg</span>
+                            <span class="price-tag">₹40/Kg</span>
+                        </div>
+                        <div class="row g-2 mb-2">
+                            <div class="col-12">
+                                <button class="btn btn-buy btn-sm w-100 fw-bold" onclick="openBuyModal('Banana', 100, 'crop-banana-1')">
+                                    <i class="fas fa-shopping-cart me-1"></i>Buy Now
+                                </button>
+                            </div>
+                        </div>
+                        <div class="row g-2">
+                            <div class="col-6"><a href="tel:9456123789" class="btn btn-call btn-sm w-100"><i class="fas fa-phone-alt me-1"></i>Call</a></div>
+                            <div class="col-6"><a href="https://wa.me/919456123789?text=Interested%20in%20Banana" target="_blank" class="btn btn-whatsapp btn-sm w-100"><i class="fab fa-whatsapp me-1"></i>Chat</a></div>
+                        </div>
+                        <div class="farmer-info">
+                            <div class="farmer-avatar">SR</div>
+                            <span class="small fw-bold">Sita Ram</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-4 col-sm-6">
+                <div class="card h-100 shadow-sm product-card" id="crop-mango-1" data-qty="20" data-price="12000">
+                    <div class="position-relative">
+                        <img crossorigin="anonymous" class="card-img-top crop-img" src="https://tse3.mm.bing.net/th/id/OIP.q7O743xlk6nFMT_Ji3Lz0gHaEo?pid=Api&P=0&h=180" alt="Alphonso Mango">
+                    </div>
+                    <div class="card-body p-3">
+                        <span class="badge-location"><i class="fas fa-map-marker-alt me-1"></i>Ratnagiri, MH</span>
+                        <h6 class="fw-bold mb-1">Alphonso Mango</h6>
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <span class="small text-muted qty-display">100 Kg</span>
+                            <span class="price-tag">₹12000/Kg</span>
+                        </div>
+                        <div class="row g-2 mb-2">
+                            <div class="col-12">
+                                <button class="btn btn-buy btn-sm w-100 fw-bold" onclick="openBuyModal('Alphonso Mango', 20, 'crop-mango-1')">
+                                    <i class="fas fa-shopping-cart me-1"></i>Buy Now
+                                </button>
+                            </div>
+                        </div>
+                        <div class="row g-2">
+                            <div class="col-6"><a href="tel:9822334455" class="btn btn-call btn-sm w-100"><i class="fas fa-phone-alt me-1"></i>Call</a></div>
+                            <div class="col-6"><a href="https://wa.me/919822334455?text=Interested%20in%20Mango" target="_blank" class="btn btn-whatsapp btn-sm w-100"><i class="fab fa-whatsapp me-1"></i>Chat</a></div>
+                        </div>
+                        <div class="farmer-info">
+                            <div class="farmer-avatar">SM</div>
+                            <span class="small fw-bold">Savita More</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-4 col-sm-6">
+                <div class="card h-100 shadow-sm product-card" id="crop-orange-1" data-qty="300" data-price="50">
+                    <div class="position-relative">
+                        <img crossorigin="anonymous" class="card-img-top crop-img" src="https://tse2.mm.bing.net/th/id/OIP.j3ippWpS_8YH0A_SXE7MkAHaEK?pid=Api&P=0&h=180" alt="Nagpur Orange">
+                    </div>
+                    <div class="card-body p-3">
+                        <span class="badge-location"><i class="fas fa-map-marker-alt me-1"></i>Nagpur, MH</span>
+                        <h6 class="fw-bold mb-1">Nagpur Orange</h6>
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <span class="small text-muted qty-display">300 Kg</span>
+                            <span class="price-tag">₹50/Kg</span>
+                        </div>
+                        <div class="row g-2 mb-2">
+                            <div class="col-12">
+                                <button class="btn btn-buy btn-sm w-100 fw-bold" onclick="openBuyModal('Nagpur Orange', 300, 'crop-orange-1')">
+                                    <i class="fas fa-shopping-cart me-1"></i>Buy Now
+                                </button>
+                            </div>
+                        </div>
+                        <div class="row g-2">
+                            <div class="col-6"><a href="tel:9122334455" class="btn btn-call btn-sm w-100"><i class="fas fa-phone-alt me-1"></i>Call</a></div>
+                            <div class="col-6"><a href="https://wa.me/919122334455?text=Interested%20in%20Orange" target="_blank" class="btn btn-whatsapp btn-sm w-100"><i class="fab fa-whatsapp me-1"></i>Chat</a></div>
+                        </div>
+                        <div class="farmer-info">
+                            <div class="farmer-avatar">SG</div>
+                            <span class="small fw-bold">Somesh Gupta</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-4 col-sm-6">
+                <div class="card h-100 shadow-sm product-card" id="crop-grapes-1" data-qty="100" data-price="65">
+                    <div class="position-relative">
+                        <img crossorigin="anonymous" class="card-img-top crop-img" src="https://tse3.mm.bing.net/th/id/OIP.h3zQKixKTJe-vpbz_OzYMQHaEJ?pid=Api&P=0&h=180" alt="Grapes">
+                    </div>
+                    <div class="card-body p-3">
+                        <span class="badge-location"><i class="fas fa-map-marker-alt me-1"></i>Nashik, MH</span>
+                        <h6 class="fw-bold mb-1">Grapes (अंगूर)</h6>
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <span class="small text-muted qty-display">100 Kg</span>
+                            <span class="price-tag">₹65/Kg</span>
+                        </div>
+                        <div class="row g-2 mb-2">
+                            <div class="col-12">
+                                <button class="btn btn-buy btn-sm w-100 fw-bold" onclick="openBuyModal('Grapes', 100, 'crop-grapes-1')">
+                                    <i class="fas fa-shopping-cart me-1"></i>Buy Now
+                                </button>
+                            </div>
+                        </div>
+                        <div class="row g-2">
+                            <div class="col-6"><a href="tel:9988776655" class="btn btn-call btn-sm w-100"><i class="fas fa-phone-alt me-1"></i>Call</a></div>
+                            <div class="col-6"><a href="https://wa.me/919988776655?text=Interested%20in%20Grapes" target="_blank" class="btn btn-whatsapp btn-sm w-100"><i class="fab fa-whatsapp me-1"></i>Chat</a></div>
+                        </div>
+                        <div class="farmer-info">
+                            <div class="farmer-avatar">AD</div>
+                            <span class="small fw-bold">Anita Devi</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-4 col-sm-6">
+                <div class="card h-100 shadow-sm product-card" id="crop-pineapple-1" data-qty="50" data-price="45">
+                    <div class="position-relative">
+                        <img crossorigin="anonymous" class="card-img-top crop-img" src="https://tse3.mm.bing.net/th/id/OIP.uUlbRCjimhX9a1cm8-mMwwHaEo?pid=Api&P=0&h=180" alt="Pineapple">
+                    </div>
+                    <div class="card-body p-3">
+                        <span class="badge-location"><i class="fas fa-map-marker-alt me-1"></i>Kochi, Kerala</span>
+                        <h6 class="fw-bold mb-1">Pineapple (अनानास)</h6>
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <span class="small text-muted qty-display">50 Kg</span>
+                            <span class="price-tag">₹45/Kg</span>
+                        </div>
+                        <div class="row g-2 mb-2">
+                            <div class="col-12">
+                                <button class="btn btn-buy btn-sm w-100 fw-bold" onclick="openBuyModal('Pineapple', 50, 'crop-pineapple-1')">
+                                    <i class="fas fa-shopping-cart me-1"></i>Buy Now
+                                </button>
+                            </div>
+                        </div>
+                        <div class="row g-2">
+                            <div class="col-6"><a href="tel:9440055667" class="btn btn-call btn-sm w-100"><i class="fas fa-phone-alt me-1"></i>Call</a></div>
+                            <div class="col-6"><a href="https://wa.me/919440055667?text=Interested%20in%20Pineapple" target="_blank" class="btn btn-whatsapp btn-sm w-100"><i class="fab fa-whatsapp me-1"></i>Chat</a></div>
+                        </div>
+                        <div class="farmer-info">
+                            <div class="farmer-avatar">AK</div>
+                            <span class="small fw-bold">Abdul Khader</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-4 col-sm-6">
+                <div class="card h-100 shadow-sm product-card" id="crop-watermelon-1" data-qty="200" data-price="15">
+                    <div class="position-relative">
+                        <img crossorigin="anonymous" class="card-img-top crop-img" src="https://tse2.mm.bing.net/th/id/OIP.h6Hqb048ZYIVe7zmN1lVhwHaFj?pid=Api&P=0&h=180" alt="Watermelon">
+                    </div>
+                    <div class="card-body p-3">
+                        <span class="badge-location"><i class="fas fa-map-marker-alt me-1"></i>Amritsar, Punjab</span>
+                        <h6 class="fw-bold mb-1">Watermelon (तरबूज)</h6>
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <span class="small text-muted qty-display">200 Kg</span>
+                            <span class="price-tag">₹15/Kg</span>
+                        </div>
+                        <div class="row g-2 mb-2">
+                            <div class="col-12">
+                                <button class="btn btn-buy btn-sm w-100 fw-bold" onclick="openBuyModal('Watermelon', 200, 'crop-watermelon-1')">
+                                    <i class="fas fa-shopping-cart me-1"></i>Buy Now
+                                </button>
+                            </div>
+                        </div>
+                        <div class="row g-2">
+                            <div class="col-6"><a href="tel:9123456789" class="btn btn-call btn-sm w-100"><i class="fas fa-phone-alt me-1"></i>Call</a></div>
+                            <div class="col-6"><a href="https://wa.me/919123456789?text=Interested%20in%20Watermelon" target="_blank" class="btn btn-whatsapp btn-sm w-100"><i class="fab fa-whatsapp me-1"></i>Chat</a></div>
+                        </div>
+                        <div class="farmer-info">
+                            <div class="farmer-avatar">SK</div>
+                            <span class="small fw-bold">Suresh Kumar</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-4 col-sm-6">
+                <div class="card h-100 shadow-sm product-card" id="crop-papaya-1" data-qty="80" data-price="30">
+                    <div class="position-relative">
+                        <img crossorigin="anonymous" class="card-img-top crop-img" src="https://tse4.mm.bing.net/th/id/OIP.8f26szpyvwboQt71NbT8NgHaFj?pid=Api&P=0&h=180" alt="Papaya">
+                    </div>
+                    <div class="card-body p-3">
+                        <span class="badge-location"><i class="fas fa-map-marker-alt me-1"></i>Jabalpur, MP</span>
+                        <h6 class="fw-bold mb-1">Papaya (पपीता)</h6>
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <span class="small text-muted qty-display">80 Kg</span>
+                            <span class="price-tag">₹30/Kg</span>
+                        </div>
+                        <div class="row g-2 mb-2">
+                            <div class="col-12">
+                                <button class="btn btn-buy btn-sm w-100 fw-bold" onclick="openBuyModal('Papaya', 80, 'crop-papaya-1')">
+                                    <i class="fas fa-shopping-cart me-1"></i>Buy Now
+                                </button>
+                            </div>
+                        </div>
+                        <div class="row g-2">
+                            <div class="col-6"><a href="tel:9876541234" class="btn btn-call btn-sm w-100"><i class="fas fa-phone-alt me-1"></i>Call</a></div>
+                            <div class="col-6"><a href="https://wa.me/919876541234?text=Interested%20in%20Papaya" target="_blank" class="btn btn-whatsapp btn-sm w-100"><i class="fab fa-whatsapp me-1"></i>Chat</a></div>
+                        </div>
+                        <div class="farmer-info">
+                            <div class="farmer-avatar">MK</div>
+                            <span class="small fw-bold">Meena Kumari</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-4 col-sm-6">
+                <div class="card h-100 shadow-sm product-card" id="crop-guava-1" data-qty="60" data-price="35">
+                    <div class="position-relative">
+                        <img crossorigin="anonymous" class="card-img-top crop-img" src="https://tse1.mm.bing.net/th/id/OIP.bHZC8FzRp1gOjaXhbWHDxQHaEo?pid=Api&P=0&h=180" alt="Guava">
+                    </div>
+                    <div class="card-body p-3">
+                        <span class="badge-location"><i class="fas fa-map-marker-alt me-1"></i>Jabalpur, MP</span>
+                        <h6 class="fw-bold mb-1">Guava (अमरूद)</h6>
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <span class="small text-muted qty-display">60 Kg</span>
+                            <span class="price-tag">₹35/Kg</span>
+                        </div>
+                        <div class="row g-2 mb-2">
+                            <div class="col-12">
+                                <button class="btn btn-buy btn-sm w-100 fw-bold" onclick="openBuyModal('Guava', 60, 'crop-guava-1')">
+                                    <i class="fas fa-shopping-cart me-1"></i>Buy Now
+                                </button>
+                            </div>
+                        </div>
+                        <div class="row g-2">
+                            <div class="col-6"><a href="tel:9876541234" class="btn btn-call btn-sm w-100"><i class="fas fa-phone-alt me-1"></i>Call</a></div>
+                            <div class="col-6"><a href="https://wa.me/919876541234?text=Interested%20in%20Guava" target="_blank" class="btn btn-whatsapp btn-sm w-100"><i class="fab fa-whatsapp me-1"></i>Chat</a></div>
+                        </div>
+                        <div class="farmer-info">
+                            <div class="farmer-avatar">MK</div>
+                            <span class="small fw-bold">Meena Kumari</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-4 col-sm-6">
+                <div class="card h-100 shadow-sm product-card" id="crop-muskmelon-1" data-qty="150" data-price="25">
+                    <div class="position-relative">
+                        <img crossorigin="anonymous" class="card-img-top crop-img" src="https://tse4.mm.bing.net/th/id/OIP.TaJUcKSnJCk4mHGES8j75QHaEG?pid=Api&P=0&h=180" alt="Muskmelon">
+                    </div>
+                    <div class="card-body p-3">
+                        <span class="badge-location"><i class="fas fa-map-marker-alt me-1"></i>Nagaur, Rajasthan</span>
+                        <h6 class="fw-bold mb-1">Muskmelon (खरबूजा)</h6>
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <span class="small text-muted qty-display">150 Kg</span>
+                            <span class="price-tag">₹25/Kg</span>
+                        </div>
+                        <div class="row g-2 mb-2">
+                            <div class="col-12">
+                                <button class="btn btn-buy btn-sm w-100 fw-bold" onclick="openBuyModal('Muskmelon', 150, 'crop-muskmelon-1')">
+                                    <i class="fas fa-shopping-cart me-1"></i>Buy Now
+                                </button>
+                            </div>
+                        </div>
+                        <div class="row g-2">
+                            <div class="col-6"><a href="tel:9414455667" class="btn btn-call btn-sm w-100"><i class="fas fa-phone-alt me-1"></i>Call</a></div>
+                            <div class="col-6"><a href="https://wa.me/919414455667?text=Interested%20in%20Muskmelon" target="_blank" class="btn btn-whatsapp btn-sm w-100"><i class="fab fa-whatsapp me-1"></i>Chat</a></div>
+                        </div>
+                        <div class="farmer-info">
+                            <div class="farmer-avatar">ML</div>
+                            <span class="small fw-bold">Mohan Lal</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <h5 class="sub-category-title"><i class="fas fa-leaf text-success"></i>Berries</h5>
+        <div class="row g-4">
+            <div class="col-lg-3 col-md-4 col-sm-6">
+                <div class="card h-100 shadow-sm product-card" id="crop-strawberry-1" data-qty="20" data-price="250">
+                    <div class="position-relative">
+                        <img crossorigin="anonymous" class="card-img-top crop-img" src="https://tse2.mm.bing.net/th/id/OIP.jfmJhprNZcfSl_CRcLjIhgHaEo?pid=Api&P=0&h=180" alt="Strawberry">
+                    </div>
+                    <div class="card-body p-3">
+                        <span class="badge-location"><i class="fas fa-map-marker-alt me-1"></i>Shimla, HP</span>
+                        <h6 class="fw-bold mb-1">Strawberry</h6>
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <span class="small text-muted qty-display">20 Kg</span>
+                            <span class="price-tag">₹250/Kg</span>
+                        </div>
+                        <div class="row g-2 mb-2">
+                            <div class="col-12">
+                                <button class="btn btn-buy btn-sm w-100 fw-bold" onclick="openBuyModal('Strawberry', 20, 'crop-strawberry-1')">
+                                    <i class="fas fa-shopping-cart me-1"></i>Buy Now
+                                </button>
+                            </div>
+                        </div>
+                        <div class="row g-2">
+                            <div class="col-6"><a href="tel:9822113344" class="btn btn-call btn-sm w-100"><i class="fas fa-phone-alt me-1"></i>Call</a></div>
+                            <div class="col-6"><a href="https://wa.me/919822113344?text=Interested%20in%20Strawberry" target="_blank" class="btn btn-whatsapp btn-sm w-100"><i class="fab fa-whatsapp me-1"></i>Chat</a></div>
+                        </div>
+                        <div class="farmer-info">
+                            <div class="farmer-avatar">VK</div>
+                            <span class="small fw-bold">Vijay Kumar</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-4 col-sm-6">
+                <div class="card h-100 shadow-sm product-card" id="crop-blueberry-1" data-qty="25" data-price="800">
+                    <div class="position-relative">
+                        <img crossorigin="anonymous" class="card-img-top crop-img" src="https://tse2.mm.bing.net/th/id/OIP.oElySEoDT8oOIJVxnUp_9wHaEJ?pid=Api&P=0&h=180" alt="Blueberry">
+                    </div>
+                    <div class="card-body p-3">
+                        <span class="badge-location"><i class="fas fa-map-marker-alt me-1"></i>Ooty, TN</span>
+                        <h6 class="fw-bold mb-1">Blueberry</h6>
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <span class="small text-muted qty-display">25 Kg</span>
+                            <span class="price-tag">₹800/Kg</span>
+                        </div>
+                        <div class="row g-2 mb-2">
+                            <div class="col-12">
+                                <button class="btn btn-buy btn-sm w-100 fw-bold" onclick="openBuyModal('Blueberry', 25, 'crop-blueberry-1')">
+                                    <i class="fas fa-shopping-cart me-1"></i>Buy Now
+                                </button>
+                            </div>
+                        </div>
+                        <div class="row g-2">
+                            <div class="col-6"><a href="tel:9844001122" class="btn btn-call btn-sm w-100"><i class="fas fa-phone-alt me-1"></i>Call</a></div>
+                            <div class="col-6"><a href="https://wa.me/919844001122?text=Interested%20in%20Blueberry" target="_blank" class="btn btn-whatsapp btn-sm w-100"><i class="fab fa-whatsapp me-1"></i>Chat</a></div>
+                        </div>
+                        <div class="farmer-info">
+                            <div class="farmer-avatar">KR</div>
+                            <span class="small fw-bold">Karthik Raja</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-4 col-sm-6">
+                <div class="card h-100 shadow-sm product-card" id="crop-raspberry-1" data-qty="20" data-price="400">
+                    <div class="position-relative">
+                        <img crossorigin="anonymous" class="card-img-top crop-img" src="https://tse1.mm.bing.net/th/id/OIP.dn1igTjoKGKsYCJTAS7f7AHaEK?pid=Api&P=0&h=180" alt="Raspberry">
+                    </div>
+                    <div class="card-body p-3">
+                        <span class="badge-location"><i class="fas fa-map-marker-alt me-1"></i>Ooty, TN</span>
+                        <h6 class="fw-bold mb-1">Raspberry</h6>
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <span class="small text-muted qty-display">20 Kg</span>
+                            <span class="price-tag">₹400/Kg</span>
+                        </div>
+                        <div class="row g-2 mb-2">
+                            <div class="col-12">
+                                <button class="btn btn-buy btn-sm w-100 fw-bold" onclick="openBuyModal('Raspberry', 20, 'crop-raspberry-1')">
+                                    <i class="fas fa-shopping-cart me-1"></i>Buy Now
+                                </button>
+                            </div>
+                        </div>
+                        <div class="row g-2">
+                            <div class="col-6"><a href="tel:9844001122" class="btn btn-call btn-sm w-100"><i class="fas fa-phone-alt me-1"></i>Call</a></div>
+                            <div class="col-6"><a href="https://wa.me/919844001122?text=Interested%20in%20Raspberry" target="_blank" class="btn btn-whatsapp btn-sm w-100"><i class="fab fa-whatsapp me-1"></i>Chat</a></div>
+                        </div>
+                        <div class="farmer-info">
+                            <div class="farmer-avatar">KR</div>
+                            <span class="small fw-bold">Karthik Raja</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-4 col-sm-6">
+                <div class="card h-100 shadow-sm product-card" id="crop-blackberry-1" data-qty="20" data-price="450">
+                    <div class="position-relative">
+                        <img crossorigin="anonymous" class="card-img-top crop-img" src="https://tse3.mm.bing.net/th/id/OIP.T5NSpUj3oMYbABNLTc6rXQHaE8?pid=Api&P=0&h=180" alt="Blackberry">
+                    </div>
+                    <div class="card-body p-3">
+                        <span class="badge-location"><i class="fas fa-map-marker-alt me-1"></i>Ooty, TN</span>
+                        <h6 class="fw-bold mb-1">Blackberry</h6>
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <span class="small text-muted qty-display">20 Kg</span>
+                            <span class="price-tag">₹450/Kg</span>
+                        </div>
+                        <div class="row g-2 mb-2">
+                            <div class="col-12">
+                                <button class="btn btn-buy btn-sm w-100 fw-bold" onclick="openBuyModal('Blackberry', 20, 'crop-blackberry-1')">
+                                    <i class="fas fa-shopping-cart me-1"></i>Buy Now
+                                </button>
+                            </div>
+                        </div>
+                        <div class="row g-2">
+                            <div class="col-6"><a href="tel:9844001122" class="btn btn-call btn-sm w-100"><i class="fas fa-phone-alt me-1"></i>Call</a></div>
+                            <div class="col-6"><a href="https://wa.me/919844001122?text=Interested%20in%20Blackberry" target="_blank" class="btn btn-whatsapp btn-sm w-100"><i class="fab fa-whatsapp me-1"></i>Chat</a></div>
+                        </div>
+                        <div class="farmer-info">
+                            <div class="farmer-avatar">KR</div>
+                            <span class="small fw-bold">Karthik Raja</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-4 col-sm-6">
+                <div class="card h-100 shadow-sm product-card" id="crop-cranberry-1" data-qty="20" data-price="900">
+                    <div class="position-relative">
+                        <img crossorigin="anonymous" class="card-img-top crop-img" src="https://tse3.mm.bing.net/th/id/OIP.a_eTSnmvq_FEiB313cj-kQHaHa?pid=Api&P=0&h=180" alt="Cranberry">
+                    </div>
+                    <div class="card-body p-3">
+                        <span class="badge-location"><i class="fas fa-map-marker-alt me-1"></i>Shimla, HP</span>
+                        <h6 class="fw-bold mb-1">Cranberry</h6>
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <span class="small text-muted qty-display">20 Kg</span>
+                            <span class="price-tag">₹900/Kg</span>
+                        </div>
+                        <div class="row g-2 mb-2">
+                            <div class="col-12">
+                                <button class="btn btn-buy btn-sm w-100 fw-bold" onclick="openBuyModal('Cranberry', 20, 'crop-cranberry-1')">
+                                    <i class="fas fa-shopping-cart me-1"></i>Buy Now
+                                </button>
+                            </div>
+                        </div>
+                        <div class="row g-2">
+                            <div class="col-6"><a href="tel:9822113344" class="btn btn-call btn-sm w-100"><i class="fas fa-phone-alt me-1"></i>Call</a></div>
+                            <div class="col-6"><a href="https://wa.me/919822113344?text=Interested%20in%20Cranberry" target="_blank" class="btn btn-whatsapp btn-sm w-100"><i class="fab fa-whatsapp me-1"></i>Chat</a></div>
+                        </div>
+                        <div class="farmer-info">
+                            <div class="farmer-avatar">VK</div>
+                            <span class="small fw-bold">Vijay Kumar</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <h5 class="sub-category-title"><i class="fas fa-lemon text-warning"></i>Citrus & Tropical</h5>
+        <div class="row g-4">
+            <div class="col-lg-3 col-md-4 col-sm-6">
+                <div class="card h-100 shadow-sm product-card" id="crop-lemon-1" data-qty="50" data-price="60">
+                    <div class="position-relative">
+                        <img crossorigin="anonymous" class="card-img-top crop-img" src="https://tse4.mm.bing.net/th/id/OIP.76DKLadoA4potzeRTTaNIwHaEK?pid=Api&P=0&h=180" alt="Lemon">
+                    </div>
+                    <div class="card-body p-3">
+                        <span class="badge-location"><i class="fas fa-map-marker-alt me-1"></i>Nagpur, MH</span>
+                        <h6 class="fw-bold mb-1">Lemon (नींबू)</h6>
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <span class="small text-muted qty-display">50 Kg</span>
+                            <span class="price-tag">₹60/Kg</span>
+                        </div>
+                        <div class="row g-2 mb-2">
+                            <div class="col-12">
+                                <button class="btn btn-buy btn-sm w-100 fw-bold" onclick="openBuyModal('Lemon', 50, 'crop-lemon-1')">
+                                    <i class="fas fa-shopping-cart me-1"></i>Buy Now
+                                </button>
+                            </div>
+                        </div>
+                        <div class="row g-2">
+                            <div class="col-6"><a href="tel:9122334455" class="btn btn-call btn-sm w-100"><i class="fas fa-phone-alt me-1"></i>Call</a></div>
+                            <div class="col-6"><a href="https://wa.me/919122334455?text=Interested%20in%20Lemon" target="_blank" class="btn btn-whatsapp btn-sm w-100"><i class="fab fa-whatsapp me-1"></i>Chat</a></div>
+                        </div>
+                        <div class="farmer-info">
+                            <div class="farmer-avatar">SG</div>
+                            <span class="small fw-bold">Somesh Gupta</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-4 col-sm-6">
+                <div class="card h-100 shadow-sm product-card" id="crop-mosambi-1" data-qty="150" data-price="55">
+                    <div class="position-relative">
+                        <img crossorigin="anonymous" class="card-img-top crop-img" src="https://tse3.mm.bing.net/th/id/OIP.efcr76EvHJgyTWVJuXBX5AHaHa?pid=Api&P=0&h=180" alt="Sweet Lime">
+                    </div>
+                    <div class="card-body p-3">
+                        <span class="badge-location"><i class="fas fa-map-marker-alt me-1"></i>Nagpur, MH</span>
+                        <h6 class="fw-bold mb-1">Sweet Lime (Mosambi)</h6>
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <span class="small text-muted qty-display">150 Kg</span>
+                            <span class="price-tag">₹55/Kg</span>
+                        </div>
+                        <div class="row g-2 mb-2">
+                            <div class="col-12">
+                                <button class="btn btn-buy btn-sm w-100 fw-bold" onclick="openBuyModal('Sweet Lime', 150, 'crop-mosambi-1')">
+                                    <i class="fas fa-shopping-cart me-1"></i>Buy Now
+                                </button>
+                            </div>
+                        </div>
+                        <div class="row g-2">
+                            <div class="col-6"><a href="tel:9122334455" class="btn btn-call btn-sm w-100"><i class="fas fa-phone-alt me-1"></i>Call</a></div>
+                            <div class="col-6"><a href="https://wa.me/919122334455?text=Interested%20in%20Sweet%20Lime" target="_blank" class="btn btn-whatsapp btn-sm w-100"><i class="fab fa-whatsapp me-1"></i>Chat</a></div>
+                        </div>
+                        <div class="farmer-info">
+                            <div class="farmer-avatar">SG</div>
+                            <span class="small fw-bold">Somesh Gupta</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-4 col-sm-6">
+                <div class="card h-100 shadow-sm product-card" id="crop-coconut-1" data-qty="500" data-price="30">
+                    <div class="position-relative">
+                        <img crossorigin="anonymous" class="card-img-top crop-img" src="https://tse1.mm.bing.net/th/id/OIP.pYjsvW1ycZSjbRo-YJhq9AHaE7?pid=Api&P=0&h=180" alt="Coconut">
+                    </div>
+                    <div class="card-body p-3">
+                        <span class="badge-location"><i class="fas fa-map-marker-alt me-1"></i>Kochi, Kerala</span>
+                        <h6 class="fw-bold mb-1">Coconut (नारियल)</h6>
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <span class="small text-muted qty-display">500 Kg</span>
+                            <span class="price-tag">₹30/Kg</span>
+                        </div>
+                        <div class="row g-2 mb-2">
+                            <div class="col-12">
+                                <button class="btn btn-buy btn-sm w-100 fw-bold" onclick="openBuyModal('Coconut', 500, 'crop-coconut-1')">
+                                    <i class="fas fa-shopping-cart me-1"></i>Buy Now
+                                </button>
+                            </div>
+                        </div>
+                        <div class="row g-2">
+                            <div class="col-6"><a href="tel:9440055667" class="btn btn-call btn-sm w-100"><i class="fas fa-phone-alt me-1"></i>Call</a></div>
+                            <div class="col-6"><a href="https://wa.me/919440055667?text=Interested%20in%20Coconut" target="_blank" class="btn btn-whatsapp btn-sm w-100"><i class="fab fa-whatsapp me-1"></i>Chat</a></div>
+                        </div>
+                        <div class="farmer-info">
+                            <div class="farmer-avatar">AK</div>
+                            <span class="small fw-bold">Abdul Khader</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-4 col-sm-6">
+                <div class="card h-100 shadow-sm product-card" id="crop-dragon-1" data-qty="30" data-price="150">
+                    <div class="position-relative">
+                        <img crossorigin="anonymous" class="card-img-top crop-img" src="https://tse1.mm.bing.net/th/id/OIP.PB8fuOHTJW_IGTccQEFfxQHaEK?pid=Api&P=0&h=180" alt="Dragon Fruit">
+                    </div>
+                    <div class="card-body p-3">
+                        <span class="badge-location"><i class="fas fa-map-marker-alt me-1"></i>Jabalpur, MP</span>
+                        <h6 class="fw-bold mb-1">Dragon Fruit</h6>
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <span class="small text-muted qty-display">30 Kg</span>
+                            <span class="price-tag">₹150/Kg</span>
+                        </div>
+                        <div class="row g-2 mb-2">
+                            <div class="col-12">
+                                <button class="btn btn-buy btn-sm w-100 fw-bold" onclick="openBuyModal('Dragon Fruit', 30, 'crop-dragon-1')">
+                                    <i class="fas fa-shopping-cart me-1"></i>Buy Now
+                                </button>
+                            </div>
+                        </div>
+                        <div class="row g-2">
+                            <div class="col-6"><a href="tel:9876541234" class="btn btn-call btn-sm w-100"><i class="fas fa-phone-alt me-1"></i>Call</a></div>
+                            <div class="col-6"><a href="https://wa.me/919876541234?text=Interested%20in%20Dragon%20Fruit" target="_blank" class="btn btn-whatsapp btn-sm w-100"><i class="fab fa-whatsapp me-1"></i>Chat</a></div>
+                        </div>
+                        <div class="farmer-info">
+                            <div class="farmer-avatar">MK</div>
+                            <span class="small fw-bold">Meena Kumari</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-4 col-sm-6">
+                <div class="card h-100 shadow-sm product-card" id="crop-pomegranate-1" data-qty="100" data-price="110">
+                    <div class="position-relative">
+                        <img crossorigin="anonymous" class="card-img-top crop-img" src="https://tse2.mm.bing.net/th/id/OIP.Z0JekKZ8hTfaw5s5DkAeYQHaE8?pid=Api&P=0&h=180" alt="Pomegranate">
+                    </div>
+                    <div class="card-body p-3">
+                        <span class="badge-location"><i class="fas fa-map-marker-alt me-1"></i>Nashik, MH</span>
+                        <h6 class="fw-bold mb-1">Pomegranate (अनार)</h6>
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <span class="small text-muted qty-display">100 Kg</span>
+                            <span class="price-tag">₹110/Kg</span>
+                        </div>
+                        <div class="row g-2 mb-2">
+                            <div class="col-12">
+                                <button class="btn btn-buy btn-sm w-100 fw-bold" onclick="openBuyModal('Pomegranate', 100, 'crop-pomegranate-1')">
+                                    <i class="fas fa-shopping-cart me-1"></i>Buy Now
+                                </button>
+                            </div>
+                        </div>
+                        <div class="row g-2">
+                            <div class="col-6"><a href="tel:9988776655" class="btn btn-call btn-sm w-100"><i class="fas fa-phone-alt me-1"></i>Call</a></div>
+                            <div class="col-6"><a href="https://wa.me/919988776655?text=Interested%20in%20Pomegranate" target="_blank" class="btn btn-whatsapp btn-sm w-100"><i class="fab fa-whatsapp me-1"></i>Chat</a></div>
+                        </div>
+                        <div class="farmer-info">
+                            <div class="farmer-avatar">AD</div>
+                            <span class="small fw-bold">Anita Devi</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-4 col-sm-6">
+                <div class="card h-100 shadow-sm product-card" id="crop-sapota-1" data-qty="70" data-price="40">
+                    <div class="position-relative">
+                        <img crossorigin="anonymous" class="card-img-top crop-img" src="https://tse3.mm.bing.net/th/id/OIP.iEoCT-oGknjWnpwDPfQXKAHaE7?pid=Api&P=0&h=180" alt="Sapota">
+                    </div>
+                    <div class="card-body p-3">
+                        <span class="badge-location"><i class="fas fa-map-marker-alt me-1"></i>Jabalpur, MP</span>
+                        <h6 class="fw-bold mb-1">Sapota (Chikoo)</h6>
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <span class="small text-muted qty-display">70 Kg</span>
+                            <span class="price-tag">₹40/Kg</span>
+                        </div>
+                        <div class="row g-2 mb-2">
+                            <div class="col-12">
+                                <button class="btn btn-buy btn-sm w-100 fw-bold" onclick="openBuyModal('Sapota', 70, 'crop-sapota-1')">
+                                    <i class="fas fa-shopping-cart me-1"></i>Buy Now
+                                </button>
+                            </div>
+                        </div>
+                        <div class="row g-2">
+                            <div class="col-6"><a href="tel:9876541234" class="btn btn-call btn-sm w-100"><i class="fas fa-phone-alt me-1"></i>Call</a></div>
+                            <div class="col-6"><a href="https://wa.me/919876541234?text=Interested%20in%20Sapota" target="_blank" class="btn btn-whatsapp btn-sm w-100"><i class="fab fa-whatsapp me-1"></i>Chat</a></div>
+                        </div>
+                        <div class="farmer-info">
+                            <div class="farmer-avatar">MK</div>
+                            <span class="small fw-bold">Meena Kumari</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-4 col-sm-6">
+                <div class="card h-100 shadow-sm product-card" id="crop-jackfruit-1" data-qty="40" data-price="35">
+                    <div class="position-relative">
+                        <img crossorigin="anonymous" class="card-img-top crop-img" src="https://tse1.mm.bing.net/th/id/OIP.6LVrkLNFHBkFOJpy_Quk4AHaE7?pid=Api&P=0&h=180" alt="Jackfruit">
+                    </div>
+                    <div class="card-body p-3">
+                        <span class="badge-location"><i class="fas fa-map-marker-alt me-1"></i>Muzzafarpur, Bihar</span>
+                        <h6 class="fw-bold mb-1">Jackfruit (कटहल)</h6>
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <span class="small text-muted qty-display">40 Kg</span>
+                            <span class="price-tag">₹35/Kg</span>
+                        </div>
+                        <div class="row g-2 mb-2">
+                            <div class="col-12">
+                                <button class="btn btn-buy btn-sm w-100 fw-bold" onclick="openBuyModal('Jackfruit', 40, 'crop-jackfruit-1')">
+                                    <i class="fas fa-shopping-cart me-1"></i>Buy Now
+                                </button>
+                            </div>
+                        </div>
+                        <div class="row g-2">
+                            <div class="col-6"><a href="tel:9456123789" class="btn btn-call btn-sm w-100"><i class="fas fa-phone-alt me-1"></i>Call</a></div>
+                            <div class="col-6"><a href="https://wa.me/919456123789?text=Interested%20in%20Jackfruit" target="_blank" class="btn btn-whatsapp btn-sm w-100"><i class="fab fa-whatsapp me-1"></i>Chat</a></div>
+                        </div>
+                        <div class="farmer-info">
+                            <div class="farmer-avatar">SR</div>
+                            <span class="small fw-bold">Sita Ram</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-4 col-sm-6">
+                <div class="card h-100 shadow-sm product-card" id="crop-lychee-1" data-qty="100" data-price="160">
+                    <div class="position-relative">
+                        <img crossorigin="anonymous" class="card-img-top crop-img" src="https://tse2.mm.bing.net/th/id/OIP.d_QCsjjP_hRYutUwUM8XdwHaFX?pid=Api&P=0&h=180" alt="Lychee">
+                    </div>
+                    <div class="card-body p-3">
+                        <span class="badge-location"><i class="fas fa-map-marker-alt me-1"></i>Muzzafarpur, Bihar</span>
+                        <h6 class="fw-bold mb-1">Lychee (लीची)</h6>
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <span class="small text-muted qty-display">100 Kg</span>
+                            <span class="price-tag">₹160/Kg</span>
+                        </div>
+                        <div class="row g-2 mb-2">
+                            <div class="col-12">
+                                <button class="btn btn-buy btn-sm w-100 fw-bold" onclick="openBuyModal('Lychee', 100, 'crop-lychee-1')">
+                                    <i class="fas fa-shopping-cart me-1"></i>Buy Now
+                                </button>
+                            </div>
+                        </div>
+                        <div class="row g-2">
+                            <div class="col-6"><a href="tel:9456123789" class="btn btn-call btn-sm w-100"><i class="fas fa-phone-alt me-1"></i>Call</a></div>
+                            <div class="col-6"><a href="https://wa.me/919456123789?text=Interested%20in%20Lychee" target="_blank" class="btn btn-whatsapp btn-sm w-100"><i class="fab fa-whatsapp me-1"></i>Chat</a></div>
+                        </div>
+                        <div class="farmer-info">
+                            <div class="farmer-avatar">SR</div>
+                            <span class="small fw-bold">Sita Ram</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <h5 class="sub-category-title"><i class="fas fa-leaf text-success"></i>Other Fruits</h5>
+        <div class="row g-4">
+            <div class="col-lg-3 col-md-4 col-sm-6">
+                <div class="card h-100 shadow-sm product-card" id="crop-pear-1" data-qty="80" data-price="70">
+                    <div class="position-relative">
+                        <img crossorigin="anonymous" class="card-img-top crop-img" src="https://tse2.mm.bing.net/th/id/OIP.iJO2eLEFyJ2l8lcUke86EAHaEJ?pid=Api&P=0&h=180" alt="Pear">
+                    </div>
+                    <div class="card-body p-3">
+                        <span class="badge-location"><i class="fas fa-map-marker-alt me-1"></i>Shimla, HP</span>
+                        <h6 class="fw-bold mb-1">Pear (नाशपाती)</h6>
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <span class="small text-muted qty-display">80 Kg</span>
+                            <span class="price-tag">₹70/Kg</span>
+                        </div>
+                        <div class="row g-2 mb-2">
+                            <div class="col-12">
+                                <button class="btn btn-buy btn-sm w-100 fw-bold" onclick="openBuyModal('Pear', 80, 'crop-pear-1')">
+                                    <i class="fas fa-shopping-cart me-1"></i>Buy Now
+                                </button>
+                            </div>
+                        </div>
+                        <div class="row g-2">
+                            <div class="col-6"><a href="tel:9822113344" class="btn btn-call btn-sm w-100"><i class="fas fa-phone-alt me-1"></i>Call</a></div>
+                            <div class="col-6"><a href="https://wa.me/919822113344?text=Interested%20in%20Pear" target="_blank" class="btn btn-whatsapp btn-sm w-100"><i class="fab fa-whatsapp me-1"></i>Chat</a></div>
+                        </div>
+                        <div class="farmer-info">
+                            <div class="farmer-avatar">VK</div>
+                            <span class="small fw-bold">Vijay Kumar</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-4 col-sm-6">
+                <div class="card h-100 shadow-sm product-card" id="crop-plum-1" data-qty="40" data-price="90">
+                    <div class="position-relative">
+                        <img crossorigin="anonymous" class="card-img-top crop-img" src="https://tse2.mm.bing.net/th/id/OIP.FIBvqJyEfd-xzsTq9zlfrQHaE6?pid=Api&P=0&h=180" alt="Plum">
+                    </div>
+                    <div class="card-body p-3">
+                        <span class="badge-location"><i class="fas fa-map-marker-alt me-1"></i>Ooty, TN</span>
+                        <h6 class="fw-bold mb-1">Plum (आलू बुखारा)</h6>
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <span class="small text-muted qty-display">40 Kg</span>
+                            <span class="price-tag">₹90/Kg</span>
+                        </div>
+                        <div class="row g-2 mb-2">
+                            <div class="col-12">
+                                <button class="btn btn-buy btn-sm w-100 fw-bold" onclick="openBuyModal('Plum', 40, 'crop-plum-1')">
+                                    <i class="fas fa-shopping-cart me-1"></i>Buy Now
+                                </button>
+                            </div>
+                        </div>
+                        <div class="row g-2">
+                            <div class="col-6"><a href="tel:9844001122" class="btn btn-call btn-sm w-100"><i class="fas fa-phone-alt me-1"></i>Call</a></div>
+                            <div class="col-6"><a href="https://wa.me/919844001122?text=Interested%20in%20Plum" target="_blank" class="btn btn-whatsapp btn-sm w-100"><i class="fab fa-whatsapp me-1"></i>Chat</a></div>
+                        </div>
+                        <div class="farmer-info">
+                            <div class="farmer-avatar">KR</div>
+                            <span class="small fw-bold">Karthik Raja</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-4 col-sm-6">
+                <div class="card h-100 shadow-sm product-card" id="crop-peach-1" data-qty="50" data-price="110">
+                    <div class="position-relative">
+                        <img crossorigin="anonymous" class="card-img-top crop-img" src="https://tse3.mm.bing.net/th/id/OIP.8R6RyH0EDgD_P1mxcQNVWAHaFk?pid=Api&P=0&h=180" alt="Peach">
+                    </div>
+                    <div class="card-body p-3">
+                        <span class="badge-location"><i class="fas fa-map-marker-alt me-1"></i>Shimla, HP</span>
+                        <h6 class="fw-bold mb-1">Peach (आडू)</h6>
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <span class="small text-muted qty-display">50 Kg</span>
+                            <span class="price-tag">₹110/Kg</span>
+                        </div>
+                        <div class="row g-2 mb-2">
+                            <div class="col-12">
+                                <button class="btn btn-buy btn-sm w-100 fw-bold" onclick="openBuyModal('Peach', 50, 'crop-peach-1')">
+                                    <i class="fas fa-shopping-cart me-1"></i>Buy Now
+                                </button>
+                            </div>
+                        </div>
+                        <div class="row g-2">
+                            <div class="col-6"><a href="tel:9822113344" class="btn btn-call btn-sm w-100"><i class="fas fa-phone-alt me-1"></i>Call</a></div>
+                            <div class="col-6"><a href="https://wa.me/919822113344?text=Interested%20in%20Peach" target="_blank" class="btn btn-whatsapp btn-sm w-100"><i class="fab fa-whatsapp me-1"></i>Chat</a></div>
+                        </div>
+                        <div class="farmer-info">
+                            <div class="farmer-avatar">VK</div>
+                            <span class="small fw-bold">Vijay Kumar</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-4 col-sm-6">
+                <div class="card h-100 shadow-sm product-card" id="crop-apricot-1" data-qty="25" data-price="180">
+                    <div class="position-relative">
+                        <img crossorigin="anonymous" class="card-img-top crop-img" src="https://tse3.mm.bing.net/th/id/OIP.g2XIeZeB156ci_3Qy4X6qwHaE8?pid=Api&P=0&h=180" alt="Apricot">
+                    </div>
+                    <div class="card-body p-3">
+                        <span class="badge-location"><i class="fas fa-map-marker-alt me-1"></i>Shimla, HP</span>
+                        <h6 class="fw-bold mb-1">Apricot (खुबानी)</h6>
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <span class="small text-muted qty-display">25 Kg</span>
+                            <span class="price-tag">₹180/Kg</span>
+                        </div>
+                        <div class="row g-2 mb-2">
+                            <div class="col-12">
+                                <button class="btn btn-buy btn-sm w-100 fw-bold" onclick="openBuyModal('Apricot', 25, 'crop-apricot-1')">
+                                    <i class="fas fa-shopping-cart me-1"></i>Buy Now
+                                </button>
+                            </div>
+                        </div>
+                        <div class="row g-2">
+                            <div class="col-6"><a href="tel:9822113344" class="btn btn-call btn-sm w-100"><i class="fas fa-phone-alt me-1"></i>Call</a></div>
+                            <div class="col-6"><a href="https://wa.me/919822113344?text=Interested%20in%20Apricot" target="_blank" class="btn btn-whatsapp btn-sm w-100"><i class="fab fa-whatsapp me-1"></i>Chat</a></div>
+                        </div>
+                        <div class="farmer-info">
+                            <div class="farmer-avatar">VK</div>
+                            <span class="small fw-bold">Vijay Kumar</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-4 col-sm-6">
+                <div class="card h-100 shadow-sm product-card" id="crop-cherry-1" data-qty="20" data-price="350">
+                    <div class="position-relative">
+                        <img crossorigin="anonymous" class="card-img-top crop-img" src="https://tse1.mm.bing.net/th/id/OIP.80lQ6pMUMU6390Ler72rKQHaEo?pid=Api&P=0&h=180" alt="Cherry">
+                    </div>
+                    <div class="card-body p-3">
+                        <span class="badge-location"><i class="fas fa-map-marker-alt me-1"></i>Shimla, HP</span>
+                        <h6 class="fw-bold mb-1">Cherry (चेरी)</h6>
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <span class="small text-muted qty-display">20 Kg</span>
+                            <span class="price-tag">₹350/Kg</span>
+                        </div>
+                        <div class="row g-2 mb-2">
+                            <div class="col-12">
+                                <button class="btn btn-buy btn-sm w-100 fw-bold" onclick="openBuyModal('Cherry', 20, 'crop-cherry-1')">
+                                    <i class="fas fa-shopping-cart me-1"></i>Buy Now
+                                </button>
+                            </div>
+                        </div>
+                        <div class="row g-2">
+                            <div class="col-6"><a href="tel:9822113344" class="btn btn-call btn-sm w-100"><i class="fas fa-phone-alt me-1"></i>Call</a></div>
+                            <div class="col-6"><a href="https://wa.me/919822113344?text=Interested%20in%20Cherry" target="_blank" class="btn btn-whatsapp btn-sm w-100"><i class="fab fa-whatsapp me-1"></i>Chat</a></div>
+                        </div>
+                        <div class="farmer-info">
+                            <div class="farmer-avatar">VK</div>
+                            <span class="small fw-bold">Vijay Kumar</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-4 col-sm-6">
+                <div class="card h-100 shadow-sm product-card" id="crop-fig-1" data-qty="25" data-price="400">
+                    <div class="position-relative">
+                        <img crossorigin="anonymous" class="card-img-top crop-img" src="https://tse1.mm.bing.net/th/id/OIP.J8iNkpmsl6wWhrROxZ-GpwHaEJ?pid=Api&P=0&h=180" alt="Fig">
+                    </div>
+                    <div class="card-body p-3">
+                        <span class="badge-location"><i class="fas fa-map-marker-alt me-1"></i>Jabalpur, MP</span>
+                        <h6 class="fw-bold mb-1">Fig (Anjeer)</h6>
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <span class="small text-muted qty-display">25 Kg</span>
+                            <span class="price-tag">₹400/Kg</span>
+                        </div>
+                        <div class="row g-2 mb-2">
+                            <div class="col-12">
+                                <button class="btn btn-buy btn-sm w-100 fw-bold" onclick="openBuyModal('Fig', 25, 'crop-fig-1')">
+                                    <i class="fas fa-shopping-cart me-1"></i>Buy Now
+                                </button>
+                            </div>
+                        </div>
+                        <div class="row g-2">
+                            <div class="col-6"><a href="tel:9876541234" class="btn btn-call btn-sm w-100"><i class="fas fa-phone-alt me-1"></i>Call</a></div>
+                            <div class="col-6"><a href="https://wa.me/919876541234?text=Interested%20in%20Fig" target="_blank" class="btn btn-whatsapp btn-sm w-100"><i class="fab fa-whatsapp me-1"></i>Chat</a></div>
+                        </div>
+                        <div class="farmer-info">
+                            <div class="farmer-avatar">MK</div>
+                            <span class="small fw-bold">Meena Kumari</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-4 col-sm-6">
+                <div class="card h-100 shadow-sm product-card" id="crop-dates-1" data-qty="50" data-price="180">
+                    <div class="position-relative">
+                        <img crossorigin="anonymous" class="card-img-top crop-img" src="https://tse4.mm.bing.net/th/id/OIP.WlgC94a500q2Uxs3V_OLvQHaHa?pid=Api&P=0&h=180" alt="Dates">
+                    </div>
+                    <div class="card-body p-3">
+                        <span class="badge-location"><i class="fas fa-map-marker-alt me-1"></i>Indore, MP</span>
+                        <h6 class="fw-bold mb-1">Dates (Khajur)</h6>
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <span class="small text-muted qty-display">50 Kg</span>
+                            <span class="price-tag">₹180/Kg</span>
+                        </div>
+                        <div class="row g-2 mb-2">
+                            <div class="col-12">
+                                <button class="btn btn-buy btn-sm w-100 fw-bold" onclick="openBuyModal('Dates', 50, 'crop-dates-1')">
+                                    <i class="fas fa-shopping-cart me-1"></i>Buy Now
+                                </button>
+                            </div>
+                        </div>
+                        <div class="row g-2">
+                            <div class="col-6"><a href="tel:9833001122" class="btn btn-call btn-sm w-100"><i class="fas fa-phone-alt me-1"></i>Call</a></div>
+                            <div class="col-6"><a href="https://wa.me/919833001122?text=Interested%20in%20Dates" target="_blank" class="btn btn-whatsapp btn-sm w-100"><i class="fab fa-whatsapp me-1"></i>Chat</a></div>
+                        </div>
+                        <div class="farmer-info">
+                            <div class="farmer-avatar">GD</div>
+                            <span class="small fw-bold">Gopal Das</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <h5 class="sub-category-title" id="dryfruits"><i class="fas fa-cookie text-brown"></i>Dry Fruits</h5>
+        <div class="row g-4 mb-5">
+            <div class="col-lg-3 col-md-4 col-sm-6">
+                <div class="card h-100 shadow-sm product-card" id="crop-almond-1" data-qty="40" data-price="800">
+                    <div class="position-relative">
+                        <img crossorigin="anonymous" class="card-img-top crop-img" src="https://tse1.mm.bing.net/th/id/OIP.ej3iR84H3gr8YhNms9rrvQHaEJ?pid=Api&P=0&h=180" alt="Almond">
+                    </div>
+                    <div class="card-body p-3">
+                        <span class="badge-location"><i class="fas fa-map-marker-alt me-1"></i>Shimla, HP</span>
+                        <h6 class="fw-bold mb-1">Almond (बादाम)</h6>
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <span class="small text-muted qty-display">40 Kg</span>
+                            <span class="price-tag">₹800/Kg</span>
+                        </div>
+                        <div class="row g-2 mb-2">
+                            <div class="col-12">
+                                <button class="btn btn-buy btn-sm w-100 fw-bold" onclick="openBuyModal('Almond', 40, 'crop-almond-1')">
+                                    <i class="fas fa-shopping-cart me-1"></i>Buy Now
+                                </button>
+                            </div>
+                        </div>
+                        <div class="row g-2">
+                            <div class="col-6"><a href="tel:9822113344" class="btn btn-call btn-sm w-100"><i class="fas fa-phone-alt me-1"></i>Call</a></div>
+                            <div class="col-6"><a href="https://wa.me/919822113344?text=Interested%20in%20Almond" target="_blank" class="btn btn-whatsapp btn-sm w-100"><i class="fab fa-whatsapp me-1"></i>Chat</a></div>
+                        </div>
+                        <div class="farmer-info">
+                            <div class="farmer-avatar">VK</div>
+                            <span class="small fw-bold">Vijay Kumar</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-4 col-sm-6">
+                <div class="card h-100 shadow-sm product-card" id="crop-cashew-1" data-qty="50" data-price="750">
+                    <div class="position-relative">
+                        <img crossorigin="anonymous" class="card-img-top crop-img" src="https://tse1.mm.bing.net/th/id/OIP.BJzlzhwbXaH5GtFGZJv_lgHaEK?pid=Api&P=0&h=180alt="Cashew">
+                    </div>
+                    <div class="card-body p-3">
+                        <span class="badge-location"><i class="fas fa-map-marker-alt me-1"></i>Ratnagiri, MH</span>
+                        <h6 class="fw-bold mb-1">Cashew (काजू)</h6>
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <span class="small text-muted qty-display">50 Kg</span>
+                            <span class="price-tag">₹750/Kg</span>
+                        </div>
+                        <div class="row g-2 mb-2">
+                            <div class="col-12">
+                                <button class="btn btn-buy btn-sm w-100 fw-bold" onclick="openBuyModal('Cashew', 50, 'crop-cashew-1')">
+                                    <i class="fas fa-shopping-cart me-1"></i>Buy Now
+                                </button>
+                            </div>
+                        </div>
+                        <div class="row g-2">
+                            <div class="col-6"><a href="tel:9822334455" class="btn btn-call btn-sm w-100"><i class="fas fa-phone-alt me-1"></i>Call</a></div>
+                            <div class="col-6"><a href="https://wa.me/919822334455?text=Interested%20in%20Cashew" target="_blank" class="btn btn-whatsapp btn-sm w-100"><i class="fab fa-whatsapp me-1"></i>Chat</a></div>
+                        </div>
+                        <div class="farmer-info">
+                            <div class="farmer-avatar">SM</div>
+                            <span class="small fw-bold">Savita More</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-4 col-sm-6">
+                <div class="card h-100 shadow-sm product-card" id="crop-walnut-1" data-qty="30" data-price="600">
+                    <div class="position-relative">
+                        <img crossorigin="anonymous" class="card-img-top crop-img" src="https://tse2.mm.bing.net/th/id/OIP.Pl_VALSO73hQc4YUYUEGaAHaEK?pid=Api&P=0&h=180" alt="Walnut">
+                    </div>
+                    <div class="card-body p-3">
+                        <span class="badge-location"><i class="fas fa-map-marker-alt me-1"></i>Shimla, HP</span>
+                        <h6 class="fw-bold mb-1">Walnut (अखरोट)</h6>
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <span class="small text-muted qty-display">30 Kg</span>
+                            <span class="price-tag">₹600/Kg</span>
+                        </div>
+                        <div class="row g-2 mb-2">
+                            <div class="col-12">
+                                <button class="btn btn-buy btn-sm w-100 fw-bold" onclick="openBuyModal('Walnut', 30, 'crop-walnut-1')">
+                                    <i class="fas fa-shopping-cart me-1"></i>Buy Now
+                                </button>
+                            </div>
+                        </div>
+                        <div class="row g-2">
+                            <div class="col-6"><a href="tel:9822113344" class="btn btn-call btn-sm w-100"><i class="fas fa-phone-alt me-1"></i>Call</a></div>
+                            <div class="col-6"><a href="https://wa.me/919822113344?text=Interested%20in%20Walnut" target="_blank" class="btn btn-whatsapp btn-sm w-100"><i class="fab fa-whatsapp me-1"></i>Chat</a></div>
+                        </div>
+                        <div class="farmer-info">
+                            <div class="farmer-avatar">VK</div>
+                            <span class="small fw-bold">Vijay Kumar</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-4 col-sm-6">
+                <div class="card h-100 shadow-sm product-card" id="crop-pistachio-1" data-qty="20" data-price="950">
+                    <div class="position-relative">
+                        <img crossorigin="anonymous" class="card-img-top crop-img" src="https://tse2.mm.bing.net/th/id/OIP.Y48prL3aWDE3zUfxGcVLYgHaEJ?pid=Api&P=0&h=180" alt="Pistachio">
+                    </div>
+                    <div class="card-body p-3">
+                        <span class="badge-location"><i class="fas fa-map-marker-alt me-1"></i>Indore, MP</span>
+                        <h6 class="fw-bold mb-1">Pistachio (पिस्ता)</h6>
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <span class="small text-muted qty-display">20 Kg</span>
+                            <span class="price-tag">₹950/Kg</span>
+                        </div>
+                        <div class="row g-2 mb-2">
+                            <div class="col-12">
+                                <button class="btn btn-buy btn-sm w-100 fw-bold" onclick="openBuyModal('Pistachio', 20, 'crop-pistachio-1')">
+                                    <i class="fas fa-shopping-cart me-1"></i>Buy Now
+                                </button>
+                            </div>
+                        </div>
+                        <div class="row g-2">
+                            <div class="col-6"><a href="tel:9833001122" class="btn btn-call btn-sm w-100"><i class="fas fa-phone-alt me-1"></i>Call</a></div>
+                            <div class="col-6"><a href="https://wa.me/919833001122?text=Interested%20in%20Pistachio" target="_blank" class="btn btn-whatsapp btn-sm w-100"><i class="fab fa-whatsapp me-1"></i>Chat</a></div>
+                        </div>
+                        <div class="farmer-info">
+                            <div class="farmer-avatar">GD</div>
+                            <span class="small fw-bold">Gopal Das</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-4 col-sm-6">
+                <div class="card h-100 shadow-sm product-card" id="crop-raisins-1" data-qty="60" data-price="280">
+                    <div class="position-relative">
+                        <img crossorigin="anonymous" class="card-img-top crop-img" src="https://tse4.mm.bing.net/th/id/OIP._Yf8eHZ-xPJVHkHkv82kKwHaE8?pid=Api&P=0&h=180" alt="Raisins">
+                    </div>
+                    <div class="card-body p-3">
+                        <span class="badge-location"><i class="fas fa-map-marker-alt me-1"></i>Nashik, MH</span>
+                        <h6 class="fw-bold mb-1">Raisins (किशमिश)</h6>
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <span class="small text-muted qty-display">60 Kg</span>
+                            <span class="price-tag">₹280/Kg</span>
+                        </div>
+                        <div class="row g-2 mb-2">
+                            <div class="col-12">
+                                <button class="btn btn-buy btn-sm w-100 fw-bold" onclick="openBuyModal('Raisins', 60, 'crop-raisins-1')">
+                                    <i class="fas fa-shopping-cart me-1"></i>Buy Now
+                                </button>
+                            </div>
+                        </div>
+                        <div class="row g-2">
+                            <div class="col-6"><a href="tel:9988776655" class="btn btn-call btn-sm w-100"><i class="fas fa-phone-alt me-1"></i>Call</a></div>
+                            <div class="col-6"><a href="https://wa.me/919988776655?text=Interested%20in%20Raisins" target="_blank" class="btn btn-whatsapp btn-sm w-100"><i class="fab fa-whatsapp me-1"></i>Chat</a></div>
+                        </div>
+                        <div class="farmer-info">
+                            <div class="farmer-avatar">AD</div>
+                            <span class="small fw-bold">Anita Devi</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+    <!-- Modal for Rate Change -->
+    <div class="modal fade" id="rateModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-warning">
+                    <h5 class="modal-title fw-bold">Update My Crop Inventory</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="updateInventoryForm">
+                        <div class="mb-3">
+                            <label class="form-label">Select Crop</label>
+                            <select class="form-select" id="cropSelect">
+                                <option value="Almond">Almond</option>
+                                <option value="Alphonso Mango">Alphonso Mango</option>
+                                <option value="Apple">Apple</option>
+                                <option value="Apricot">Apricot</option>
+                                <option value="Bajra">Bajra</option>
+                                <option value="Banana">Banana</option>
+                                <option value="Basmati Rice">Basmati Rice</option>
+                                <option value="Blackberry">Blackberry</option>
+                                <option value="Blueberry">Blueberry</option>
+                                <option value="Cashew">Cashew</option>
+                                <option value="Chana Dal">Chana Dal</option>
+                                <option value="Cherry">Cherry</option>
+                                <option value="Coconut">Coconut</option>
+                                <option value="Cranberry">Cranberry</option>
+                                <option value="Dates">Dates</option>
+                                <option value="Dragon Fruit">Dragon Fruit</option>
+                                <option value="Dry Green Peas">Dry Green Peas</option>
+                                <option value="Fig">Fig</option>
+                                <option value="Grapes">Grapes</option>
+                                <option value="Guava">Guava</option>
+                                <option value="Jackfruit">Jackfruit</option>
+                                <option value="Kabuli Chana">Kabuli Chana</option>
+                                <option value="Lemon">Lemon</option>
+                                <option value="Lobia">Lobia</option>
+                                <option value="Lychee">Lychee</option>
+                                <option value="Masoor Dal">Masoor Dal</option>
+                                <option value="Moong Dal">Moong Dal</option>
+                                <option value="Moth Beans">Moth Beans</option>
+                                <option value="Muskmelon">Muskmelon</option>
+                                <option value="Mustard Seeds">Mustard Seeds</option>
+                                <option value="Nagpur Orange">Nagpur Orange</option>
+                                <option value="Papaya">Papaya</option>
+                                <option value="Peach">Peach</option>
+                                <option value="Pear">Pear</option>
+                                <option value="Pineapple">Pineapple</option>
+                                <option value="Pistachio">Pistachio</option>
+                                <option value="Plum">Plum</option>
+                                <option value="Pomegranate">Pomegranate</option>
+                                <option value="Raisins">Raisins</option>
+                                <option value="Rajma">Rajma</option>
+                                <option value="Raspberry">Raspberry</option>
+                                <option value="Sapota">Sapota</option>
+                                <option value="Sharbat Wheat">Sharbat Wheat</option>
+                                <option value="Soybean">Soybean</option>
+                                <option value="Strawberry">Strawberry</option>
+                                <option value="Sweet Lime">Sweet Lime</option>
+                                <option value="Toor Dal">Toor Dal</option>
+                                <option value="Urad Dal">Urad Dal</option>
+                                <option value="Walnut">Walnut</option>
+                                <option value="Watermelon">Watermelon</option>
+                                <option value="Whole Chana">Whole Chana</option>
+                            </select>
+                        </div>
+                        <div class="row">
+                            <div class="col-6 mb-3">
+                                <label class="form-label">New Price (₹/Kg)</label>
+                                <input type="number" class="form-control" id="newPrice" placeholder="e.g. 2500">
+                            </div>
+                            <div class="col-6 mb-3">
+                                <label class="form-label">Total Quantity (Kg)</label>
+                                <input type="number" class="form-control" id="newQuantity" min="20" placeholder="Min 20 Kg">
+                                <small class="text-muted">Minimum 20 Kg required</small>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-warning fw-bold" onclick="updateCropInventory()">Update Details</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for Buying Crop -->
+    <div class="modal fade" id="buyModal" tabindex="-1">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-header bg-success text-white border-0">
+                    <h5 class="modal-title fw-bold"><i class="fas fa-shopping-basket me-2"></i>Buy Crop</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <p class="mb-3 text-muted">Enter quantity to buy from <b id="buyCropName" class="text-dark"></b>:</p>
+                    <div class="input-group mb-3">
+                        <input type="number" class="form-control" id="buyQty" min="1" value="1" oninput="calculateTotal()">
+                        <span class="input-group-text">Kg</span>
+                    </div>
+                    <p class="small text-muted mb-4">Available Stock: <span id="maxBuyQty" class="fw-bold"></span> Kg</p>
+                    
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold text-muted mb-1">Delivery Address & Pincode:</label>
+                        <textarea class="form-control form-control-sm" id="deliveryAddress" rows="2" placeholder="Enter full address & pincode"></textarea>
+                    </div>
+
+                    <div class="payment-summary p-3 rounded-3 bg-light border border-2 border-dashed mb-3">
+                        <div class="d-flex justify-content-between small text-muted mb-1">
+                            <span>Price per Kg:</span>
+                            <span id="unitPriceDisplay">₹0</span>
+                        </div>
+                        <div class="d-flex justify-content-between fw-bold fs-5">
+                            <span>Total Amount:</span>
+                            <span class="text-success" id="totalAmountDisplay">₹0</span>
+                        </div>
+                    </div>
+
+                    <div class="payment-methods mb-2">
+                        <p class="small fw-bold text-muted mb-2">Supported Payment Methods:</p>
+                        <div class="d-flex gap-3 fs-4 text-muted justify-content-center mb-3">
+                            <i class="fab fa-cc-visa" title="Visa"></i>
+                            <i class="fab fa-cc-mastercard" title="Mastercard"></i>
+                            <i class="fas fa-mobile-alt" title="UPI"></i>
+                            <i class="fas fa-university" title="Net Banking"></i>
+                            <i class="fas fa-wallet" title="Wallets"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer border-0 p-4 pt-0 flex-column">
+                    <button type="button" class="btn btn-success btn-sm fw-bold w-100 mb-2" onclick="startRazorpayPayment()">
+                        <i class="fas fa-credit-card me-2"></i>Pay Online (All Methods)
+                    </button>
+                    <button type="button" class="btn btn-outline-success btn-sm fw-bold w-100 mb-2" onclick="startCODPurchase()">
+                        <i class="fas fa-truck me-2"></i>Cash on Delivery (COD)
+                    </button>
+                    <button type="button" class="btn btn-outline-secondary btn-sm w-100" data-bs-dismiss="modal">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let selectedCropCardId = null;
+        let currentUnitPrice = 0;
+
+        function openBuyModal(cropName, maxQty, cardId) {
+            const card = document.getElementById(cardId);
+            currentUnitPrice = parseInt(card.getAttribute('data-price'));
+            
+            document.getElementById('buyCropName').innerText = cropName;
+            document.getElementById('maxBuyQty').innerText = maxQty;
+            document.getElementById('buyQty').max = maxQty;
+            document.getElementById('buyQty').value = 1;
+            selectedCropCardId = cardId;
+            
+            calculateTotal();
+            new bootstrap.Modal(document.getElementById('buyModal')).show();
+        }
+
+        function calculateTotal() {
+            const qtyInput = document.getElementById('buyQty');
+            let qty = parseInt(qtyInput.value) || 0;
+            const maxQty = parseInt(document.getElementById('maxBuyQty').innerText);
+            
+            // Limit to max quantity
+            if (qty > maxQty) {
+                qty = maxQty;
+                qtyInput.value = maxQty;
+            }
+            
+            const total = qty * currentUnitPrice;
+            document.getElementById('unitPriceDisplay').innerText = "₹" + currentUnitPrice;
+            document.getElementById('totalAmountDisplay').innerText = "₹" + total.toLocaleString();
+        }
+
+        
+        function startRazorpayPayment() {
+            const buyQtyInput = document.getElementById('buyQty');
+            const buyQty = parseInt(buyQtyInput.value);
+            const card = document.getElementById(selectedCropCardId);
+            const currentQty = parseInt(card.getAttribute('data-qty'));
+            const cropName = document.getElementById('buyCropName').innerText;
+            const address = document.getElementById('deliveryAddress').value.trim();
+            
+            if (!buyQty || buyQty <= 0) {
+                alert("Please enter a valid quantity!");
+                return;
+            }
+
+            if (buyQty > currentQty) {
+                alert("Not enough stock available!");
+                return;
+            }
+
+            if (!address) {
+                alert("Please enter your delivery address and pincode!");
+                return;
+            }
+
+            const totalAmount = buyQty * currentUnitPrice;
+
+            // Razorpay Options
+            const options = {
+                "key": "rzp_test_KisanBazaarDemo123", // Corrected Demo Key
+                "amount": totalAmount * 100, 
+                "currency": "INR",
+                "name": "Kisan Bazaar",
+                "description": "Payment for " + buyQty + " Kg of " + cropName,
+                "image": "https://cdn-icons-png.flaticon.com/512/2612/2612148.png",
+                "handler": function (response){
+                    processPurchase(buyQty, totalAmount, response.razorpay_payment_id || 'PAY_' + Math.random().toString(36).substr(2, 9).toUpperCase(), "Online", address);
+                },
+                "prefill": {
+                    "name": "Ramesh Patel",
+                    "email": "customer@kisanbazaar.in",
+                    "contact": "9988776655"
+                },
+                "theme": {
+                    "color": "#2e7d32"
+                },
+                "modal": {
+                    "ondismiss": function(){
+                        console.log('Checkout form closed');
+                    }
+                }
+            };
+
+            try {
+                const rzp1 = new Razorpay(options);
+                rzp1.open();
+            } catch (e) {
+                console.error("Razorpay error:", e);
+                // Fallback for simulation
+                if (confirm(`Simulated Payment: Proceed with ₹${totalAmount.toLocaleString()}?`)) {
+                    processPurchase(buyQty, totalAmount, 'SIM_PAY_' + Math.random().toString(36).substr(2, 9).toUpperCase(), "Online", address);
+                }
+            }
+        }
+
+        function startCODPurchase() {
+            const buyQtyInput = document.getElementById('buyQty');
+            const buyQty = parseInt(buyQtyInput.value);
+            const card = document.getElementById(selectedCropCardId);
+            const currentQty = parseInt(card.getAttribute('data-qty'));
+            const cropName = document.getElementById('buyCropName').innerText;
+            const address = document.getElementById('deliveryAddress').value.trim();
+            
+            if (!buyQty || buyQty <= 0) {
+                alert("Please enter a valid quantity!");
+                return;
+            }
+
+            if (buyQty > currentQty) {
+                alert("Not enough stock available!");
+                return;
+            }
+
+            if (!address) {
+                alert("Please enter your delivery address and pincode!");
+                return;
+            }
+
+            const totalAmount = buyQty * currentUnitPrice;
+
+            if (confirm(`Confirm order for ${buyQty} Kg of ${cropName} via Cash on Delivery?\nTotal Amount: ₹${totalAmount.toLocaleString()}`)) {
+                processPurchase(buyQty, totalAmount, 'COD_' + Math.random().toString(36).substr(2, 9).toUpperCase(), "Cash on Delivery", address);
+            }
+        }
+
+        function processPurchase(buyQty, totalAmount, paymentId, method = "Online", address = "") {
+            const card = document.getElementById(selectedCropCardId);
+            const currentQty = parseInt(card.getAttribute('data-qty'));
+            
+            const newQty = currentQty - buyQty;
+            card.setAttribute('data-qty', newQty);
+            card.querySelector('.qty-display').innerText = newQty + " Kg";
+            
+            if (newQty <= 0) {
+                card.classList.add('out-of-stock');
+                if (!card.querySelector('.out-of-stock-label')) {
+                    const label = document.createElement('div');
+                    label.className = 'out-of-stock-label';
+                    label.innerText = 'NOT AVAILABLE';
+                    card.querySelector('.card-img-top').parentElement.appendChild(label);
+                }
+                const buyBtn = card.querySelector('.btn-buy');
+                if (buyBtn) {
+                    buyBtn.disabled = true;
+                    buyBtn.innerText = "Sold Out";
+                }
+            }
+
+            bootstrap.Modal.getInstance(document.getElementById('buyModal')).hide();
+            
+            // Generate delivery details
+            const deliveryDate = new Date();
+            deliveryDate.setDate(deliveryDate.getDate() + Math.floor(Math.random() * 3) + 3); // 3-5 days
+            const dateString = deliveryDate.toLocaleDateString('en-IN', { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' });
+            const trackingId = 'TRK' + Math.random().toString(36).substr(2, 9).toUpperCase();
+
+            // Show custom success message with payment ID and delivery details
+            const successMsg = `
+                Order Successful! 🎉
+                -------------------------
+                Method: ${method}
+                Amount: ₹${totalAmount.toLocaleString()}
+                ID: ${paymentId}
+                Product: ${document.getElementById('buyCropName').innerText}
+                Quantity: ${buyQty} Kg
+                
+                🚚 Delivery Updates:
+                Address: ${address}
+                Tracking ID: ${trackingId}
+                Est. Delivery: ${dateString}
+                
+                Stock updated successfully. You will receive SMS updates on your delivery status.
+            `;
+            alert(successMsg);
+        }
+
+        function updateCropInventory() {
+            const cropName = document.getElementById('cropSelect').value;
+            const price = document.getElementById('newPrice').value;
+            const qty = document.getElementById('newQuantity').value;
+
+            if (qty && qty < 20) {
+                alert("Minimum quantity must be 20 Kg");
+                return;
+            }
+
+            const cards = document.querySelectorAll('.product-card');
+            let found = false;
+            cards.forEach(card => {
+                if (card.querySelector('h6').innerText.includes(cropName)) {
+                    found = true;
+                    if (price) {
+                        card.querySelector('.price-tag').innerText = "₹" + price + "/Kg";
+                        card.setAttribute('data-price', price);
+                    }
+                    if (qty) {
+                        card.querySelector('.qty-display').innerText = qty + " Kg";
+                        card.setAttribute('data-qty', qty);
+                        
+                        if (qty > 0) {
+                            card.classList.remove('out-of-stock');
+                            const label = card.querySelector('.out-of-stock-label');
+                            if (label) label.remove();
+                            const buyBtn = card.querySelector('.btn-buy');
+                            if (buyBtn) {
+                                buyBtn.disabled = false;
+                                buyBtn.innerText = "Buy Now";
+                            }
+                        }
+                    }
+                }
+            });
+
+            if (found) {
+                bootstrap.Modal.getInstance(document.getElementById('rateModal')).hide();
+                alert("Inventory updated successfully!");
+            } else {
+                alert("Crop not found in current marketplace view.");
+            }
+        }
+    </script>
+
+    <div class="chat-widget">
+        <a href="https://wa.me/919876543210?text=Hi%20Kisan%20Bazaar%20Support" target="_blank" class="chat-btn shadow-lg">
+            <i class="fab fa-whatsapp"></i>
+        </a>
+    </div>
+
+    <footer class="bg-dark text-white pt-5 pb-3">
+        <div class="container text-center">
+            <p>&copy; 2026 Kisan Bazaar. All rights reserved.</p>
+        </div>
+    </footer>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
